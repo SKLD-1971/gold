@@ -105,7 +105,7 @@
         .editor-question-item { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
         .editor-question-item input { flex-grow: 1; }
         .editor-question-item select { width: 120px; flex-shrink: 0; }
-        .editor-question-item .btn-danger { width: 40px; height: 40px; padding: 0; font-size: 1.2em; flex-shrink: 0; }
+        .editor-question-item .btn-danger { width: 40px; height: 40px; padding: 0; font-size: 1.2em; flex-shrink: 0; display:flex; justify-content:center; align-items:center; }
         #editor-selection-buttons { display: flex; flex-direction: column; gap: 10px; }
     </style>
 </head>
@@ -119,15 +119,14 @@
     </div>
     <div class="container">
         <div id="selection-page" class="page-section active">
-            <div class="logo-container"><img src="https://media.discordapp.net/attachments/1210718340449042473/1438107990074069052/Goldsnow.png" alt="Logo"></div>
-            <p class="subtitle">Select the path you wish to apply for, traveler.</p>
+            <div class="logo-container"><img src="" alt="Logo"></div>
+            <p class="subtitle"></p>
             <div class="selection-grid"></div>
         </div>
         <div id="login-page" class="page-section">
             <div class="page-header"><h1>Developer Sanctum</h1><button class="btn btn-secondary" onclick="showSelection()">Back</button></div>
-            <div style="margin-bottom: 1rem;"><input type="text" id="login-user" placeholder="Enter username"></div>
-            <div style="margin-bottom: 1rem;"><input type="password" id="login-pass" placeholder="Enter password"></div>
-            <button class="btn btn-primary" onclick="handleDevLogin()">Login</button>
+            <div style="margin-bottom: 1rem;"><input type="password" id="dev-key" placeholder="Enter Developer Key" autocomplete="off" onkeydown="if(event.key==='Enter')handleDevLogin()"></div>
+            <button class="btn btn-primary" onclick="handleDevLogin()">Enter Sanctum</button>
         </div>
         <div id="admin-panel" class="page-section">
             <div class="page-header"><h1>Admin Panel</h1><button class="btn btn-secondary" onclick="showSelection()">Logout</button></div>
@@ -136,6 +135,7 @@
                     <h3>Management</h3>
                     <button class="admin-nav-btn active" data-target="admin-webhooks">Webhook Editor</button>
                     <button class="admin-nav-btn" data-target="admin-editor">Application Editor</button>
+                    <button class="admin-nav-btn" data-target="admin-theme">Theme & Settings</button>
                     <div style="margin-top: auto;"><button class="btn btn-danger" onclick="resetAllData()">Reset All Settings</button></div>
                 </div>
                 <div class="admin-content">
@@ -164,6 +164,19 @@
                         <div id="editor-selection-buttons"></div>
                         <div id="application-editor-view" style="display: none;"></div>
                     </div>
+                    <div id="admin-theme" class="admin-section">
+                        <h2>Theme & General Settings</h2>
+                        <div style="margin-bottom: 1rem;"><label>Logo Image URL</label><input type="text" id="theme-logoUrl"></div>
+                        <div style="margin-bottom: 1.5rem;"><label>Homepage Subtitle</label><input type="text" id="theme-subtitle"></div>
+                        <h3>Color System</h3>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div><label>Primary Color</label><input type="color" id="theme-primaryColor" style="padding:0; height:40px; width:100%; background: none;"></div>
+                            <div><label>Glow Color</label><input type="color" id="theme-glowColor" style="padding:0; height:40px; width:100%; background: none;"></div>
+                            <div><label>Background Start</label><input type="color" id="theme-backgroundStart" style="padding:0; height:40px; width:100%; background: none;"></div>
+                            <div><label>Background End</label><input type="color" id="theme-backgroundEnd" style="padding:0; height:40px; width:100%; background: none;"></div>
+                        </div>
+                         <button class="btn btn-primary" onclick="saveAllSettings(this)" style="margin-top: 20px;">Save All Settings</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -186,6 +199,14 @@
     let originalSiteSettings; 
 
     const defaultSettings = {
+        theme: {
+            logoUrl: "https://media.discordapp.net/attachments/1210718340449042473/1438107990074069052/Goldsnow.png",
+            subtitle: "Select the path you wish to apply for, traveler.",
+            primaryColor: "#89b4fa",
+            glowColor: "rgba(137, 180, 250, 0.5)",
+            backgroundStart: "#0d1a2f",
+            backgroundEnd: "#040a18"
+        },
         logWebhooks: { visitUrl: "", adminLogUrl: "" },
         appConfigs: {
             support: { 
@@ -232,6 +253,19 @@
         }
     };
 
+    function applyTheme(settings) {
+        const theme = settings.theme || defaultSettings.theme;
+        const root = document.documentElement;
+        root.style.setProperty('--primary-color', theme.primaryColor);
+        root.style.setProperty('--glow-color', theme.glowColor);
+        root.style.setProperty('--background-start', theme.backgroundStart);
+        root.style.setProperty('--background-end', theme.backgroundEnd);
+        const logoImg = document.querySelector('.logo-container img');
+        if (logoImg) logoImg.src = theme.logoUrl;
+        const subtitleP = document.querySelector('#selection-page .subtitle');
+        if (subtitleP) subtitleP.textContent = theme.subtitle;
+    }
+
     async function loadDataFromStorage() {
         if (!JSONBIN_CONFIG.API_KEY.startsWith('$2') || !JSONBIN_CONFIG.BIN_ID) {
             console.warn("JSONBin config is missing. Using default settings. Changes will not be saved online.");
@@ -246,13 +280,16 @@
             if (!response.ok) throw new Error(`Failed to fetch settings: ${response.statusText}`);
             
             const data = await response.json();
-            siteSettings = (data.record && Object.keys(data.record).length > 0) ? data.record : JSON.parse(JSON.stringify(defaultSettings));
+            const record = (data.record && Object.keys(data.record).length > 0) ? data.record : JSON.parse(JSON.stringify(defaultSettings));
+            siteSettings = { ...JSON.parse(JSON.stringify(defaultSettings)), ...record };
             originalSiteSettings = JSON.parse(JSON.stringify(siteSettings));
         } catch (error) {
             console.error("Error loading settings from JSONBin. Using default settings.", error);
             siteSettings = JSON.parse(JSON.stringify(defaultSettings));
             originalSiteSettings = JSON.parse(JSON.stringify(defaultSettings));
             alert("Could not load online settings. Check your JSONBin config and console for errors.");
+        } finally {
+            applyTheme(siteSettings);
         }
     }
 
@@ -294,35 +331,24 @@
 
     function generateDiff(before, after) {
         let changes = [];
-        const checkedKeys = new Set();
-
+        if(JSON.stringify(before.theme) !== JSON.stringify(after.theme)){
+            changes.push(`~ Updated Theme & General Settings.`);
+        }
         const allAppKeys = new Set([...Object.keys(before.appConfigs || {}), ...Object.keys(after.appConfigs || {})]);
 
         allAppKeys.forEach(appKey => {
             const beforeApp = before.appConfigs[appKey];
             const afterApp = after.appConfigs[appKey];
 
-            if (!beforeApp && afterApp) {
-                changes.push(`+ Added Application: "${afterApp.title}"`);
-                return;
-            }
-            if (beforeApp && !afterApp) {
-                changes.push(`- Removed Application: "${beforeApp.title}"`);
-                return;
-            }
-            if (!beforeApp && !afterApp) return;
+            if (!beforeApp && afterApp) { changes.push(`+ Added Application: "${afterApp.title}"`); return; }
+            if (beforeApp && !afterApp) { changes.push(`- Removed Application: "${beforeApp.title}"`); return; }
+            if (!beforeApp || !afterApp) return;
 
             const allProps = new Set([...Object.keys(beforeApp), ...Object.keys(afterApp)]);
             allProps.forEach(prop => {
-                const beforeVal = JSON.stringify(beforeApp[prop]);
-                const afterVal = JSON.stringify(afterApp[prop]);
-
-                if (beforeVal !== afterVal) {
-                    if(prop === 'questions') {
-                         changes.push(`~ Edited Questions for "${afterApp.title}"`);
-                    } else {
-                         changes.push(`~ ${afterApp.title}.${prop}: "${beforeApp[prop]}" -> "${afterApp[prop]}"`);
-                    }
+                if (JSON.stringify(beforeApp[prop]) !== JSON.stringify(afterApp[prop])) {
+                    if(prop === 'questions') { changes.push(`~ Edited Questions for "${afterApp.title}"`); } 
+                    else { changes.push(`~ ${afterApp.title}.${prop}: "${beforeApp[prop]}" -> "${afterApp[prop]}"`); }
                 }
             });
         });
@@ -336,14 +362,18 @@
 
 
     async function saveAllSettings(saveButton) {
-        const activeTab = document.getElementById('webhook-editor-container')?.dataset.activeTab;
-        if (activeTab) {
-            const inputs = document.querySelectorAll(`#webhook-editor-container [data-key]`);
-            if (activeTab === 'logs') {
-                siteSettings.logWebhooks = siteSettings.logWebhooks || {};
-                inputs.forEach(input => siteSettings.logWebhooks[input.dataset.key] = input.value);
-            } else if (siteSettings.appConfigs[activeTab]) {
-                inputs.forEach(input => siteSettings.appConfigs[activeTab][input.dataset.key] = input.value);
+        const activeNav = document.querySelector('.admin-nav-btn.active').dataset.target;
+
+        if (activeNav === 'admin-webhooks') {
+            const activeTab = document.getElementById('webhook-editor-container')?.dataset.activeTab;
+            if (activeTab) {
+                const inputs = document.querySelectorAll(`#webhook-editor-container [data-key]`);
+                if (activeTab === 'logs') {
+                    siteSettings.logWebhooks = siteSettings.logWebhooks || {};
+                    inputs.forEach(input => siteSettings.logWebhooks[input.dataset.key] = input.value);
+                } else if (siteSettings.appConfigs[activeTab]) {
+                    inputs.forEach(input => siteSettings.appConfigs[activeTab][input.dataset.key] = input.value);
+                }
             }
         }
 
@@ -365,10 +395,7 @@
                 embeds: [{
                     title: "🛠️ Site Settings Updated",
                     color: 15844367,
-                    fields: [
-                        { name: "👤 Admin Info", value: geoInfo, inline: false },
-                        { name: "📝 Changes Made", value: diffText, inline: false }
-                    ],
+                    fields: [ { name: "👤 Admin Info", value: geoInfo, inline: false }, { name: "📝 Changes Made", value: diffText, inline: false } ],
                     timestamp: new Date().toISOString()
                 }]
             };
@@ -393,7 +420,6 @@
         container.style.pointerEvents = 'none';
         
         await loadDataFromStorage();
-        
         setupHomepage();
         
         container.style.opacity = '1';
@@ -407,8 +433,7 @@
             const snowflake = document.createElement('div');
             snowflake.className = 'snowflake';
             const size = Math.random() * 4 + 1;
-            snowflake.style.width = `${size}px`;
-            snowflake.style.height = `${size}px`;
+            snowflake.style.width = `${size}px`; snowflake.style.height = `${size}px`;
             snowflake.style.left = `${Math.random() * 100}vw`;
             snowflake.style.animationName = 'fall';
             snowflake.style.animationDuration = `${Math.random() * 10 + 10}s`;
@@ -424,10 +449,15 @@
     function showSelection() { showPage('selection-page'); setupHomepage(); }
     
     function handleDevLogin() {
-        if (document.getElementById('login-user').value === 'Gold' && document.getElementById('login-pass').value === 'gold98123') { 
+        const keyInput = document.getElementById('dev-key');
+        if (keyInput.value === '98123GOLD-PS#$') {
             showPage('admin-panel'); 
             setupAdminPanel();
-        } else { alert('Incorrect credentials.'); }
+            keyInput.value = '';
+        } else { 
+            alert('Incorrect Developer Key.');
+            keyInput.value = '';
+        }
     }
     
     async function simpleWebhookSend(url, embed) {
@@ -464,6 +494,7 @@
             const app = siteSettings.appConfigs[key];
             grid.innerHTML += `<div class="selection-card" onclick="showForm('${key}')"><div class="icon" style="color: ${app.color || '#fff'}">${app.icon}</div><div><h2>${app.title}</h2><p>${app.desc}</p></div></div>`;
         }
+        applyTheme(siteSettings);
     }
 
     function renderForm(formType) {
@@ -488,6 +519,7 @@
         }));
         renderWebhookEditor(Object.keys(siteSettings.appConfigs)[0] || 'logs');
         setupApplicationEditorList();
+        renderThemeEditor();
     }
     
     function renderWebhookEditor(tabKey) {
@@ -526,7 +558,7 @@
                     <div><label>Webhook URL</label><input type="text" data-key="webhookUrl" value="${config.webhookUrl || ''}"></div>
                     <div><label>Bot Name</label><input type="text" data-key="username" value="${config.username || ''}"></div>
                     <div><label>Bot Avatar URL</label><input type="text" data-key="avatarUrl" value="${config.avatarUrl || ''}"></div>
-                    <div><label>Embed Color</label><input type="color" data-key="embedColor" value="${config.embedColor || '#ffffff'}" style="padding:0; height:40px;"></div>
+                    <div><label>Embed Color</label><input type="color" data-key="embedColor" value="${config.embedColor || '#ffffff'}" style="padding:0; height:40px; background: none;"></div>
                     <div><label>Embed Title</label><input type="text" data-key="embedTitle" value="${config.embedTitle || ''}"></div>`;
         }
         container.innerHTML = html;
@@ -550,6 +582,24 @@
         document.getElementById('preview-avatar').src = tempConfig.avatarUrl || "";
         document.getElementById('preview-embed-title').textContent = (tempConfig.embedTitle || "").replace('{role}', config.title);
         document.getElementById('preview-embed').style.borderLeftColor = tempConfig.embedColor;
+    }
+
+    function renderThemeEditor() {
+        const theme = siteSettings.theme || defaultSettings.theme;
+        document.getElementById('theme-logoUrl').value = theme.logoUrl;
+        document.getElementById('theme-subtitle').value = theme.subtitle;
+        document.getElementById('theme-primaryColor').value = theme.primaryColor;
+        document.getElementById('theme-glowColor').value = theme.glowColor;
+        document.getElementById('theme-backgroundStart').value = theme.backgroundStart;
+        document.getElementById('theme-backgroundEnd').value = theme.backgroundEnd;
+
+        document.querySelectorAll('#admin-theme input').forEach(input => {
+            input.addEventListener('input', () => {
+                const key = input.id.replace('theme-', '');
+                siteSettings.theme[key] = input.value;
+                applyTheme(siteSettings);
+            });
+        });
     }
 
     async function resetAllData() {
@@ -585,7 +635,7 @@
                     <option value="text" ${q.type === 'text' ? 'selected' : ''}>Text</option>
                     <option value="textarea" ${q.type === 'textarea' ? 'selected' : ''}>Textarea</option>
                 </select>
-                <button class="btn-danger" onclick="this.parentElement.remove()">X</button>
+                <button class="btn btn-danger" onclick="this.parentElement.remove()" title="Delete Question"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
             </div>`).join('');
 
         view.innerHTML = `
@@ -595,8 +645,8 @@
                 <div><label>Description</label><input id="edit-desc" value="${data.desc.replace(/"/g, '&quot;')}"></div>
             </div>
             <div><label>Icon (SVG Code)</label><textarea id="edit-icon" rows="3">${data.icon}</textarea></div>
-            <h4 style="margin-top: 2rem;">Questions</h4>
-            <div id="question-editor-container">${questionsHTML}</div>
+            <h4 style="margin-top: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Questions</h4>
+            <div id="question-editor-container" style="margin-top: 1.5rem;">${questionsHTML}</div>
             <div style="display:flex; gap: 1rem; margin-top: 1.5rem;">
                 <button class="btn btn-secondary" onclick="addQuestionToEditor()">+ Add Question</button>
                 <button class="btn btn-primary" id="save-app-btn" style="flex-grow: 1;" onclick="saveApplicationChanges('${appKey}', this)">Save Changes</button>
@@ -618,7 +668,7 @@
                 <option value="text">Text</option>
                 <option value="textarea" selected>Textarea</option>
             </select>
-            <button class="btn-danger" onclick="this.parentElement.remove()">X</button>
+            <button class="btn btn-danger" onclick="this.parentElement.remove()" title="Delete Question"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
         `;
         container.appendChild(newItem);
     }
@@ -635,12 +685,10 @@
         config.icon = document.getElementById('edit-icon').value;
         
         const questions = [];
-        document.querySelectorAll('.editor-question-item').forEach((item, i) => {
+        document.querySelectorAll('.editor-question-item').forEach((item) => {
             const label = item.querySelector('.question-label-input').value;
             const type = item.querySelector('.question-type-select').value;
-            if (label) {
-                questions.push({ label, type });
-            }
+            if (label) { questions.push({ label, type }); }
         });
         config.questions = questions;
 
@@ -655,7 +703,7 @@
             siteSettings.appConfigs[key].title = "New Application";
             siteSettings.appConfigs[key].desc = "A new role to apply for.";
             siteSettings.appConfigs[key].questions = [{label: "Discord ID", type: "text"}];
-            await saveAllSettings(null); // Pass null as we don't have a specific button here
+            await saveAllSettings(null);
             setupApplicationEditorList();
             renderApplicationEditor(key);
         } else if (key) {
