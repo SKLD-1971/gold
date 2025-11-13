@@ -17,6 +17,7 @@
             --success-glow: rgba(46, 204, 113, 0.4);
             --waiting-color: #3498db;
             --waiting-glow: rgba(52, 152, 219, 0.4);
+            --info-color: #9b59b6;
             --background-start: #0d1a2f;
             --background-end: #040a18;
             --surface-color: rgba(10, 20, 40, 0.65);
@@ -68,6 +69,7 @@
 
         label { display: block; margin-bottom: 10px; font-weight: 600; color: var(--text-secondary); }
         textarea, input, select { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; font-size: 1em; color: var(--text-primary); box-sizing: border-box; transition: all 0.3s ease; }
+        input[type="file"] { padding: 10px; }
         textarea:focus, input:focus, select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 15px var(--glow-color); }
         select { appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23cdd6f4%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 1rem center; background-size: .7em; padding-right: 2.5rem; }
         .form-header, .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
@@ -79,78 +81,92 @@
         .btn-primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 5px 25px var(--glow-color); }
         .btn-secondary { background: none; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 8px 16px; font-size: 0.9em; width: auto; }
         
-        .fixed-buttons-container { position: fixed; z-index: 1001; }
+        .fixed-buttons-container { position: fixed; z-index: 1001; display:flex; flex-direction:column; gap:10px; }
         .top-right { top: 20px; right: 20px; }
         .bottom-right { bottom: 20px; right: 20px; }
         .fixed-btn { background: var(--surface-color); border: 1px solid var(--border-color); width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); backdrop-filter: blur(10px); transition: all 0.3s ease; color: var(--text-primary); }
         .fixed-btn:hover { border-color: var(--primary-color); transform: scale(1.1); }
 
         #admin-panel { padding: 0; border: none; }
-        .admin-layout, .webhook-editor-layout { display: flex; gap: 20px; min-height: 500px; }
+        .admin-layout { display: flex; gap: 20px; min-height: 500px; }
         .admin-sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; }
-        .admin-nav-btn { display: block; width: 100%; text-align: left; background: none; border: none; color: var(--text-secondary); padding: 10px; border-radius: 6px; cursor: pointer; font-size: 1em; margin-bottom: 5px; }
+        .admin-nav-btn { display: flex; align-items:center; gap: 10px; width: 100%; text-align: left; background: none; border: none; color: var(--text-secondary); padding: 12px; border-radius: 6px; cursor: pointer; font-size: 1em; margin-bottom: 5px; }
+        .admin-nav-btn svg { width: 20px; height: 20px; }
         .admin-nav-btn:hover, .admin-nav-btn.active { background: var(--primary-color); color: var(--background-start); }
         .admin-content { flex-grow: 1; max-height: 65vh; overflow-y: auto;}
         .admin-section { display: none; } .admin-section.active { display: block; }
         .btn-danger { background: rgba(231, 76, 60, 0.2); color: var(--danger-color); border: 1px solid var(--danger-color); }
         .btn-danger:hover { box-shadow: 0 0 15px var(--danger-glow); }
         
-        .webhook-editor-tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); }
-        .webhook-tab { padding: 10px 15px; background: none; border: none; color: var(--text-secondary); cursor: pointer; border-radius: 6px 6px 0 0; }
-        .webhook-tab.active { background: var(--surface-color); border: 1px solid var(--border-color); border-bottom: 1px solid var(--surface-color); color: var(--primary-color); }
-        .discord-preview-container { width: 350px; flex-shrink: 0; background-color: #36393f; border-radius: 8px; padding: 16px; }
-        #preview-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #7289da; object-fit: cover; }
-        #preview-username { font-weight: 600; color: #fff; }
-        .discord-embed { background-color: #2f3136; border-radius: 4px; border-left: 4px solid; padding: 12px; }
-        #preview-embed-title { color: #fff; font-weight: 700; margin: 0 0 8px 0; }
-        .discord-embed-field strong { color: #b9bbbe; font-size: 0.9em; }
-        .discord-embed-field p { color: #dcddde; margin: 0; background: #202225; padding: 4px; border-radius: 3px; }
-
-        .editor-question-item { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
-        .editor-question-item input { flex-grow: 1; }
-        .editor-question-item select { width: 120px; flex-shrink: 0; }
-        .editor-question-item .btn-danger { width: 40px; height: 40px; padding: 0; font-size: 1.2em; flex-shrink: 0; display:flex; justify-content:center; align-items:center; }
-        #editor-selection-buttons { display: flex; flex-direction: column; gap: 10px; }
+        .webhook-editor-tabs, .admin-tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+        .webhook-tab, .admin-tab { padding: 10px 15px; background: none; border: none; color: var(--text-secondary); cursor: pointer; border-radius: 6px 6px 0 0; }
+        .webhook-tab.active, .admin-tab.active { background: var(--surface-color); border: 1px solid var(--border-color); border-bottom: 1px solid var(--surface-color); color: var(--primary-color); }
         
-        .submission-item, .status-result-item { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 15px; }
+        .submission-item, .status-result-item, .admin-list-item { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 15px; }
         .submission-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom:10px; border-bottom:1px solid var(--border-color); }
-        .status-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; padding-bottom:10px; border-bottom:1px solid var(--border-color); }
-        .status-header .icon { display:flex; align-items:center; justify-content:center; }
-        .status-header .icon svg { width: 24px; height: 24px; }
-        .status-header h3 { margin: 0; font-size: 1.5em; }
-        .status-accepted h3 { color: var(--success-color); }
-        .status-rejected h3 { color: var(--danger-color); }
-        .status-waiting h3 { color: var(--waiting-color); }
+        .status-header { display: flex; flex-direction:column; align-items: center; text-align:center; gap: 12px; margin: 20px 0; }
+        .status-header .icon svg { width: 60px; height: 60px; }
+        .status-header h3 { margin: 10px 0 0 0; font-size: 2em; }
+        .status-accepted h3 { color: var(--success-color); } .status-accepted .icon { color: var(--success-color); }
+        .status-rejected h3 { color: var(--danger-color); } .status-rejected .icon { color: var(--danger-color); }
+        .status-waiting h3 { color: var(--waiting-color); } .status-waiting .icon { color: var(--waiting-color); }
         .answer-item { margin-bottom: 12px; }
         .answer-item strong { color: var(--text-secondary); display: block; margin-bottom: 4px; }
-        .answer-item p { margin: 0; background-color: var(--input-bg); padding: 10px; border-radius: 6px; }
+        .answer-item p { margin: 0; background-color: var(--input-bg); padding: 10px; border-radius: 6px; white-space: pre-wrap; word-break: break-word; }
 
         .app-status-indicator { text-align: center; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; }
         .app-status-open { background: var(--success-glow); border: 1px solid var(--success-color); color: var(--success-color); }
         .app-status-closed { background: var(--danger-glow); border: 1px solid var(--danger-color); color: var(--danger-color); }
 
-        /* Toggle Switch CSS */
         .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--danger-color); transition: .4s; border-radius: 34px; }
         .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--success-color); }
-        input:checked + .slider:before { transform: translateX(26px); }
+        input:checked + .slider { background-color: var(--success-color); } input:checked + .slider:before { transform: translateX(26px); }
+
+        #logs-container .log-item { background: rgba(0,0,0,0.1); border-left: 4px solid var(--info-color); padding: 15px; margin-bottom: 10px; border-radius: 4px; transition: all 0.3s ease; }
+        #logs-container .log-item:hover { background: rgba(0,0,0,0.2); }
+        #logs-container .log-item p { margin: 0 0 5px 0; word-wrap: break-word; } #logs-container .log-item .timestamp { font-size: 0.8em; color: var(--text-secondary); }
+        .log-item.log-type-login { border-color: var(--success-color); }
+        .log-item.log-type-delete { border-color: var(--danger-color); }
+        .log-item.log-type-status_change { border-color: var(--waiting-color); }
+        .log-item.log-type-task_completion { border-color: var(--staff-color); }
+        .log-item.log-type-user_management { border-color: var(--primary-color); }
+        
+        .task-item { border-left: 4px solid var(--primary-color); padding-left: 15px; margin-bottom: 25px; }
+        .task-progress-bar { background-color: var(--input-bg); border-radius: 8px; overflow: hidden; height: 10px; margin-top: 5px; }
+        .task-progress { background-color: var(--primary-color); height: 100%; transition: width 0.5s ease; }
+        .shine { animation: shine-animation 2s linear infinite; }
+        @keyframes shine-animation { 0%, 100% { text-shadow: 0 0 5px, 0 0 10px, 0 0 15px; } 50% { text-shadow: 0 0 20px, 0 0 30px, 0 0 40px; } }
+
+        #image-preview-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); animation: fadeIn 0.3s; }
+        #image-preview-modal img { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 8px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        #image-preview-modal .close-btn { position: absolute; top: 20px; right: 30px; font-size: 3em; color: white; cursor: pointer; text-shadow: 0 0 10px black; }
+        .admin-tab-content {display: none;} .admin-tab-content.active {display: block;}
     </style>
 </head>
 <body>
-    <!-- Status Icons SVG Definitions -->
+    <!-- SVG Definitions -->
     <svg width="0" height="0" style="position:absolute">
       <defs>
         <symbol id="icon-accepted" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></symbol>
         <symbol id="icon-rejected" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></symbol>
         <symbol id="icon-waiting" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"></path></symbol>
+        <symbol id="icon-submissions" viewBox="0 0 24 24"><path fill="currentColor" d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"></path></symbol>
+        <symbol id="icon-editor" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></symbol>
+        <symbol id="icon-webhooks" viewBox="0 0 24 24"><path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></symbol>
+        <symbol id="icon-settings" viewBox="0 0 24 24"><path fill="currentColor" d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17-.59 1.69.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></symbol>
+        <symbol id="icon-logs" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2h-2v10h2V2zm4.25 2.75-.88.88C17.41 6.66 18 8.23 18 10c0 3.31-2.69 6-6 6s-6-2.69-6-6c0-1.77.59-3.34 1.62-4.63l-.88-.88C4.7 6.13 4 8.21 4 10c0 4.42 3.58 8 8 8s8-3.58 8-8c0-1.79-.7-3.87-1.75-5.25z"></path></symbol>
+        <symbol id="icon-staff" viewBox="0 0 24 24"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></symbol>
       </defs>
     </svg>
 
     <div id="snow-container"></div>
+    <div id="image-preview-modal" onclick="this.style.display='none'"><span class="close-btn">&times;</span><img src="" id="preview-image"></div>
+    
     <div class="fixed-buttons-container top-right">
         <div class="fixed-btn" onclick="showPage('login-page')" title="Admin Login"><svg fill="currentColor" viewBox="0 0 20 20" width="24"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 12a1 1 0 100-2 1 1 0 000 2z"></path></svg></div>
+        <div class="fixed-btn" onclick="showPage('staff-login-page')" title="Staff Tasks"><svg width="24" height="24"><use xlink:href="#icon-staff"></use></svg></div>
     </div>
     <div class="fixed-buttons-container bottom-right">
         <a href="https://discord.gg/42AjuqEDZs" target="_blank" class="fixed-btn" title="Join our Discord"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.36981C18.699 3.50425 16.961 2.85318 15.121 2.42725C15.033 2.65653 14.921 2.91207 14.823 3.14999C13.069 2.82563 11.233 2.82563 9.479 3.14999C9.381 2.91207 9.269 2.65653 9.181 2.42725C7.341 2.85318 5.603 3.50425 3.985 4.36981C0.465 8.42385 -0.444 12.3526 0.15 16.208C1.974 17.6892 4.029 18.6669 6.22 19.2739C6.444 18.9863 6.645 18.6872 6.822 18.3765C6.262 18.1472 5.726 17.8817 5.228 17.5855C5.166 17.5492 5.11 17.4918 5.068 17.4208C5.011 17.2016 4.978 16.9746 4.978 16.7453C4.978 16.7027 4.981 16.6602 4.981 16.6176C7.942 18.2398 11.333 18.7342 14.659 17.9933C15.229 18.7852 16.039 19.4632 17.065 19.9723C17.213 20.0433 17.369 20.0961 17.532 20.1347C19.721 19.2981 21.782 17.9701 23.486 16.208C24.516 11.9332 23.543 7.89218 20.317 4.36981ZM8.02 13.6396C7.031 13.6396 6.22 12.8179 6.22 11.8183C6.22 10.8187 7.017 10 8.02 10C9.023 10 9.82 10.8187 9.82 11.8183C9.82 12.8179 9.023 13.6396 8.02 13.6396ZM16.22 13.6396C15.231 13.6396 14.42 12.8179 14.42 11.8183C14.42 10.8187 15.217 10 16.22 10C17.223 10 18.02 10.8187 18.02 11.8183C18.02 12.8179 17.223 13.6396 16.22 13.6396Z"></path></svg></a>
@@ -175,25 +191,44 @@
             <div id="status-results" style="margin-top: 20px;"></div>
         </div>
         <div id="admin-panel" class="page-section">
-            <div class="page-header"><h1>Admin Panel</h1><button class="btn btn-secondary" onclick="showSelection()">Logout</button></div>
+            <div class="page-header"><h1>Admin Panel</h1><button class="btn btn-secondary" onclick="adminLogout()">Logout</button></div>
             <div class="admin-layout">
                 <div class="admin-sidebar">
                     <div>
-                        <h3>Management</h3>
-                        <button class="admin-nav-btn active" data-target="admin-submissions">Submissions</button>
-                        <button class="admin-nav-btn" data-target="admin-editor">Application Editor</button>
-                        <button class="admin-nav-btn" data-target="admin-webhooks">Webhook Editor</button>
-                        <button class="admin-nav-btn" data-target="admin-theme">Theme & Settings</button>
+                        <h3>Applications</h3>
+                        <button class="admin-nav-btn" data-target="admin-submissions"><svg><use xlink:href="#icon-submissions"></use></svg>Submissions</button>
+                        <button class="admin-nav-btn" data-target="admin-editor"><svg><use xlink:href="#icon-editor"></use></svg>Application Editor</button>
+                        <button class="admin-nav-btn" data-target="admin-webhooks"><svg><use xlink:href="#icon-webhooks"></use></svg>Webhook Editor</button>
                     </div>
-                    <div style="margin-top: auto;">
-                        <button class="btn btn-danger" onclick="clearAllSubmissions()">Clear All Submissions</button>
-                        <button class="btn btn-danger" onclick="resetAllData()" style="margin-top:10px;">Reset All Settings</button>
+                    <div style="margin-top:20px;">
+                        <h3>Staff System</h3>
+                        <button class="admin-nav-btn" data-target="admin-staff-management"><svg><use xlink:href="#icon-staff"></use></svg>Staff Management</button>
+                    </div>
+                     <div style="margin-top:20px;">
+                        <h3>Site</h3>
+                        <button class="admin-nav-btn" data-target="admin-theme"><svg><use xlink:href="#icon-settings"></use></svg>Theme & Settings</button>
+                        <button class="admin-nav-btn" data-target="admin-logs"><svg><use xlink:href="#icon-logs"></use></svg>Logs</button>
                     </div>
                 </div>
                 <div class="admin-content">
-                    <div id="admin-submissions" class="admin-section active">
+                    <div id="admin-submissions" class="admin-section">
                          <h2>Submissions</h2>
                          <div id="submissions-container"></div>
+                    </div>
+                    <div id="admin-staff-management" class="admin-section">
+                        <h2>Staff Management</h2>
+                        <div class="admin-tabs">
+                           <button class="admin-tab" data-target="staff-users">Users</button>
+                           <button class="admin-tab" data-target="staff-roles">Roles</button>
+                           <button class="admin-tab" data-target="staff-tasks">Tasks</button>
+                        </div>
+                        <div id="staff-users" class="admin-tab-content"></div>
+                        <div id="staff-roles" class="admin-tab-content"></div>
+                        <div id="staff-tasks" class="admin-tab-content"></div>
+                    </div>
+                     <div id="admin-logs" class="admin-section">
+                         <h2>Activity Logs</h2>
+                         <div id="logs-container"><p>Loading logs...</p></div>
                     </div>
                     <div id="admin-webhooks" class="admin-section">
                         <div class="webhook-editor-layout">
@@ -201,17 +236,6 @@
                                <div class="webhook-editor-tabs"></div>
                                <div id="webhook-editor-container"></div>
                                <button class="btn btn-primary" id="save-webhook-btn" onclick="saveAllSettings(this)" style="margin-top: 20px;">Save All Settings</button>
-                           </div>
-                           <div class="discord-preview-container">
-                                <h3>Live Preview</h3>
-                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                                    <img id="preview-avatar" src="">
-                                    <span id="preview-username">Application Bot</span>
-                                </div>
-                                <div class="discord-embed" id="preview-embed">
-                                    <h4 id="preview-embed-title">New Staff Application</h4>
-                                    <div class="discord-embed-field"><strong>Your Discord ID & Tag</strong><p>user#0001</p></div>
-                                </div>
                            </div>
                         </div>
                     </div>
@@ -248,25 +272,35 @@
             </div>
         </div>
         <div id="form-container" class="page-section"></div>
+        <div id="staff-login-page" class="page-section">
+            <div class="page-header"><h1>Staff Login</h1><button class="btn btn-secondary" onclick="showSelection()">Back</button></div>
+            <p>Enter your assigned staff name/ID to view your tasks.</p>
+            <div style="margin-bottom: 1rem;"><input type="text" id="staff-id-input" placeholder="Enter Your Staff ID"></div>
+            <button class="btn btn-primary" onclick="handleStaffLogin()">View My Tasks</button>
+        </div>
+        <div id="staff-tasks-page" class="page-section">
+        </div>
     </div>
     
     <script>
     // ===================================================================================
-    //  CONFIGURATION - PASTE YOUR JSONBIN DETAILS HERE
+    //  CONFIGURATION
     // ===================================================================================
     const JSONBIN_CONFIG = {
-        API_KEY: "$2a$10$a/FFzBDimef5bKwM/mYYs.IP4ih4e8nOykqDGNm8iU0cnQ4YG8vOy", // This is your X-Master-Key
+        API_KEY: "$2a$10$a/FFzBDimef5bKwM/mYYs.IP4ih4e8nOykqDGNm8iU0cnQ4YG8vOy",
         BIN_ID: "6914699943b1c97be9a8acc6",
         BIN_URL: function() { return `https://api.jsonbin.io/v3/b/${this.BIN_ID}/latest` },
         BIN_WRITE_URL: function() { return `https://api.jsonbin.io/v3/b/${this.BIN_ID}` }
     };
     const DEV_KEY = "98123GOLD-PS#$";
-    const SUBMISSION_COOLDOWN_HOURS = 72; // 3 days
+    const DELETE_KEY = "Deletedgold98122";
+    const SUBMISSION_COOLDOWN_HOURS = 72;
+    const MAX_UPLOAD_SIZE_MB = 2;
     // ===================================================================================
 
     let siteSettings;
-    let originalSiteSettings; 
     let countdownInterval;
+    let isSaving = false;
 
     const defaultSettings = {
         theme: {
@@ -279,7 +313,8 @@
             applicationsOpen: true,
         },
         logWebhooks: { visitUrl: "", adminLogUrl: "" },
-        submissions: {}, // Holds all application submissions
+        submissions: {},
+        logs: [],
         appConfigs: {
             support: { 
                 webhookUrl: "", username: "Support Bot", avatarUrl: "https://media.discordapp.net/attachments/1210718340449042473/1438107990074069052/Goldsnow.png", embedColor: "#7289DA", embedTitle: "New {role} Application", 
@@ -288,8 +323,7 @@
                 questions: [
                     { label: "Your Discord ID (e.g., user#0001)", type: "text" },
                     { label: "How will you handle a situation where a player got scammed?", type: "textarea" },
-                    { label: "What will you do if you see another staff member abuse?", type: "textarea" },
-                    { label: "What kind of proof will you accept if a victim provides you it?", type: "textarea" }
+                    { label: "What will you do if you see another staff member abuse?", type: "textarea" }
                 ] 
             },
             staff: { 
@@ -298,21 +332,15 @@
                 desc: "Enforce rules, moderate, and manage events.", 
                 questions: [
                     { label: "Your Discord ID (e.g., user#0001)", type: "text" },
-                    { label: "How will you handle a situation where a player got scammed?", type: "textarea" },
                     { label: "What will you do if you see another staff member abuse?", type: "textarea" },
                     { label: "What do you do if you notice a moderator abusing his/hers title?", type: "textarea" }
                 ] 
             },
-            promoter: { 
-                webhookUrl: "", username: "Promoter Bot", avatarUrl: "https://media.discordapp.net/attachments/1210718340449042473/1438107990074069052/Goldsnow.png", embedColor: "#ff4081", embedTitle: "New {role} Application", 
-                title: "YouTuber / Promoter", icon: `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="40"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>`, color: "var(--promoter-color)", 
-                desc: "Create content and build hype for the server.", 
-                questions: [
-                    { label: "Your Discord ID (e.g., user#0001)", type: "text" },
-                    { label: "Link to your primary content channel (YouTube, Twitch, etc.).", type: "text" },
-                    { label: "Describe the type of content you plan to create for our server.", type: "textarea" }
-                ] 
-            }
+        },
+        staffSystem: {
+            users: {},
+            roles: {},
+            tasks: {}
         }
     };
 
@@ -329,9 +357,8 @@
 
     async function loadDataFromStorage(forceFresh = false) {
         if (!JSONBIN_CONFIG.API_KEY.startsWith('$2') || !JSONBIN_CONFIG.BIN_ID) {
-            console.warn("JSONBin config is missing. Using default settings. Changes will not be saved online.");
+            console.warn("JSONBin config is missing. Using default settings.");
             siteSettings = JSON.parse(localStorage.getItem('siteSettingsBackup')) || JSON.parse(JSON.stringify(defaultSettings));
-            originalSiteSettings = JSON.parse(JSON.stringify(siteSettings));
             return;
         }
         if (siteSettings && !forceFresh) return; 
@@ -340,28 +367,23 @@
             const response = await fetch(JSONBIN_CONFIG.BIN_URL(), {
                 headers: { 'X-Master-Key': JSONBIN_CONFIG.API_KEY, 'X-Bin-Meta': 'false' }
             });
-            if (!response.ok) throw new Error(`Failed to fetch settings: ${response.statusText}`);
+            if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
             
             const data = await response.json();
-            const record = (data && Object.keys(data).length > 0) ? data : JSON.parse(JSON.stringify(defaultSettings));
-            siteSettings = { ...JSON.parse(JSON.stringify(defaultSettings)), ...record };
-            originalSiteSettings = JSON.parse(JSON.stringify(siteSettings));
+            siteSettings = { ...JSON.parse(JSON.stringify(defaultSettings)), ...data };
             localStorage.setItem('siteSettingsBackup', JSON.stringify(siteSettings));
         } catch (error) {
-            console.error("Error loading settings from JSONBin. Using local or default settings.", error);
+            console.error("Error loading from JSONBin, using local backup.", error);
             siteSettings = JSON.parse(localStorage.getItem('siteSettingsBackup')) || JSON.parse(JSON.stringify(defaultSettings));
-            originalSiteSettings = JSON.parse(JSON.stringify(siteSettings));
-            alert("Could not load online settings. Check your JSONBin config and console for errors.");
         } finally {
             applyTheme(siteSettings);
         }
     }
 
     async function saveDataToStorage(saveButton) {
-        if (!JSONBIN_CONFIG.API_KEY.startsWith('$2') || !JSONBIN_CONFIG.BIN_ID) {
-            alert("Cannot save. JSONBin config is missing in the script.");
-            return false;
-        }
+        if (isSaving) return false;
+        isSaving = true;
+        if (!JSONBIN_CONFIG.API_KEY.startsWith('$2') || !JSONBIN_CONFIG.BIN_ID) { isSaving = false; return false; }
         if (saveButton) { saveButton.disabled = true; saveButton.textContent = "Saving..."; }
         try {
             const response = await fetch(JSONBIN_CONFIG.BIN_WRITE_URL(), {
@@ -369,51 +391,44 @@
                 headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_CONFIG.API_KEY },
                 body: JSON.stringify(siteSettings)
             });
-            if (!response.ok) throw new Error(`Failed to save settings: ${response.statusText}`);
-            originalSiteSettings = JSON.parse(JSON.stringify(siteSettings));
+            if (!response.ok) throw new Error(`Save failed: ${response.statusText}`);
             localStorage.setItem('siteSettingsBackup', JSON.stringify(siteSettings));
             return true;
         } catch (error) {
-            console.error("Error saving settings to JSONBin.", error);
-            alert("Error saving settings online. Check console for details.");
+            console.error("Error saving to JSONBin.", error);
             return false;
         } finally {
             if (saveButton) { saveButton.disabled = false; saveButton.textContent = "Save All Settings"; }
+            isSaving = false;
         }
     }
     
-    async function adminLog(title, description, color = 3447003) {
+    async function adminLog(title, description, type = 'info', webhookColor = 3447003) {
+        if (!siteSettings.logs) siteSettings.logs = [];
+        const logEntry = { timestamp: new Date().toISOString(), title, description, type };
+        siteSettings.logs.unshift(logEntry);
+        if (siteSettings.logs.length > 200) siteSettings.logs = siteSettings.logs.slice(0, 200);
+
         if (siteSettings.logWebhooks && siteSettings.logWebhooks.adminLogUrl) {
             await simpleWebhookSend(siteSettings.logWebhooks.adminLogUrl, {
-                username: "Admin Logger",
-                avatar_url: "https://i.imgur.com/gLaLga1.png",
-                embeds: [{ title, description, color, timestamp: new Date().toISOString() }]
+                username: "Admin Logger", avatar_url: "https://i.imgur.com/gLaLga1.png",
+                embeds: [{ title, description, color: webhookColor, timestamp: new Date().toISOString() }]
             });
         }
+        // No need to save here, will be saved by the calling function
     }
 
     async function saveAllSettings(saveButton) {
-        const activeNav = document.querySelector('.admin-nav-btn.active').dataset.target;
-
-        if (activeNav === 'admin-webhooks') {
-            const activeTab = document.getElementById('webhook-editor-container')?.dataset.activeTab;
-            if (activeTab) {
-                const inputs = document.querySelectorAll(`#webhook-editor-container [data-key]`);
-                if (activeTab === 'logs') {
-                    siteSettings.logWebhooks = siteSettings.logWebhooks || {};
-                    inputs.forEach(input => siteSettings.logWebhooks[input.dataset.key] = input.value);
-                } else if (siteSettings.appConfigs[activeTab]) {
-                    inputs.forEach(input => siteSettings.appConfigs[activeTab][input.dataset.key] = input.value);
-                }
-            }
-        }
-        await adminLog("🛠️ Site Settings Updated", "An admin has updated the site configuration.");
         const success = await saveDataToStorage(saveButton);
         if (success) {
             alert('All settings saved and synced online!');
+            await adminLog("🛠️ Site Settings Updated", "An admin has updated the site configuration.", 'info');
+            await saveDataToStorage(null); // Save the log itself
             await loadDataFromStorage(true);
             setupHomepage();
             if (document.getElementById('admin-panel').classList.contains('active')) setupAdminPanel();
+        } else {
+            alert('Error saving settings. Check console for details.');
         }
     }
 
@@ -422,6 +437,7 @@
         const container = document.querySelector('.container');
         container.style.opacity = '0.5'; container.style.pointerEvents = 'none';
         await loadDataFromStorage();
+        if (!siteSettings.staffSystem) siteSettings.staffSystem = JSON.parse(JSON.stringify(defaultSettings.staffSystem));
         setupHomepage();
         container.style.opacity = '1'; container.style.pointerEvents = 'auto';
     });
@@ -438,13 +454,45 @@
         }
     }
     
-    function showPage(pageId) { document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active')); document.getElementById(pageId).classList.add('active'); }
-    function showSelection() { showPage('selection-page'); setupHomepage(); }
+    function showPage(pageId) {
+        document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+        const page = document.getElementById(pageId);
+        if (page) page.classList.add('active');
+
+        if (pageId === 'staff-login-page' && sessionStorage.getItem('currentStaffId')) {
+            showPage('staff-tasks-page');
+        } else if (pageId === 'staff-tasks-page') {
+            renderStaffTasksPage();
+        }
+    }
     
-    function handleDevLogin() {
+    function showSelection() { 
+        sessionStorage.removeItem('currentStaffId');
+        showPage('selection-page'); 
+        setupHomepage(); 
+    }
+
+    function adminLogout() {
+        sessionStorage.removeItem('currentStaffId');
+        showSelection();
+    }
+    
+    async function handleDevLogin() {
         const keyInput = document.getElementById('dev-key');
         if (keyInput.value === DEV_KEY) {
-            showPage('admin-panel'); setupAdminPanel(); keyInput.value = '';
+            keyInput.value = '';
+            showPage('admin-panel'); 
+            setupAdminPanel();
+            try {
+                const response = await fetch('https://ip-api.com/json');
+                const geo = await response.json();
+                const flag = geo.countryCode.toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0) + 127397));
+                await adminLog("🔑 Admin Panel Accessed", `**IP:** ${geo.query}\n**Location:** ${geo.city}, ${geo.country} ${flag}`, 'login', 3066993);
+                await saveDataToStorage(null);
+            } catch (e) { 
+                await adminLog("🔑 Admin Panel Accessed", "Could not fetch GeoIP data.", 'login', 3066993); 
+                await saveDataToStorage(null);
+            }
         } else { alert('Incorrect Developer Key.'); keyInput.value = ''; }
     }
     
@@ -458,45 +506,29 @@
 
     async function submitApplication(formType) {
         const form = document.getElementById(`app-form-${formType}`);
-        form.querySelector('button[type="submit"]').disabled = true;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
 
         const config = siteSettings.appConfigs[formType];
-        const answers = Array.from(form.querySelectorAll('[data-question-label]')).map(el => ({
-            question: el.dataset.questionLabel,
-            answer: el.value
-        }));
-        
+        const answers = Array.from(form.querySelectorAll('[data-question-label]')).map(el => ({ question: el.dataset.questionLabel, answer: el.value }));
         const discordId = answers[0]?.answer.trim();
-        if (!discordId) { alert('Discord ID is required to submit.'); return; }
-
-        await loadDataFromStorage(true);
-
-        const submissionId = generateUUID();
-        const newSubmission = {
-            id: submissionId, appType: formType, status: 'waiting',
-            timestamp: new Date().toISOString(), answers: answers
-        };
-
+        if (!discordId) { alert('Discord ID is required.'); submitBtn.disabled = false; return; }
+        
+        localStorage.setItem(`last_discord_id_${formType}`, discordId);
+        
+        const newSubmission = { id: generateUUID(), appType: formType, status: 'waiting', timestamp: new Date().toISOString(), answers };
         if (!siteSettings.submissions[discordId]) siteSettings.submissions[discordId] = [];
         siteSettings.submissions[discordId].push(newSubmission);
         
-        const success = await saveDataToStorage(form.querySelector('button[type="submit"]'));
+        await adminLog("📝 New Application", `**Applicant:** ${discordId}\n**For:** ${config.title}`, 'submission', 5763719);
+        const success = await saveDataToStorage(null);
         if (success) {
             localStorage.setItem(`cooldown_${formType}`, new Date().getTime());
-            await adminLog("📝 New Application Submitted", `**Applicant:** ${discordId}\n**For:** ${config.title}`, 5763719);
-            
-            if (config.webhookUrl) {
-                const fields = answers.map(a => ({ name: a.question, value: "```" + a.answer + "```" }));
-                await simpleWebhookSend(config.webhookUrl, {
-                    username: config.username, avatar_url: config.avatarUrl,
-                    embeds: [{ title: config.embedTitle.replace('{role}', config.title), color: parseInt(config.embedColor.substring(1), 16), fields, timestamp: new Date().toISOString() }]
-                });
-            }
             alert('Success! Your application has been submitted.');
             showSelection();
         } else {
-            alert('There was an error submitting your application. Please try again.');
-            form.querySelector('button[type="submit"]').disabled = false;
+            alert('Error submitting application.');
+            submitBtn.disabled = false;
         }
     }
     
@@ -507,9 +539,7 @@
         if (!siteSettings) return;
 
         const isOpen = siteSettings.theme.applicationsOpen;
-        statusHeader.innerHTML = `<div class="app-status-indicator ${isOpen ? 'app-status-open' : 'app-status-closed'}">
-            Applications are currently ${isOpen ? 'Open' : 'Closed'}
-        </div>`;
+        statusHeader.innerHTML = `<div class="app-status-indicator ${isOpen ? 'app-status-open' : 'app-status-closed'}">Applications are currently ${isOpen ? 'Open' : 'Closed'}</div>`;
         
         if (isOpen) {
             Object.keys(siteSettings.appConfigs).forEach(key => {
@@ -530,108 +560,83 @@
         let formHTML = `<div class="form-header"><h1>${data.title} Application</h1><button class="btn btn-secondary" onclick="showSelection()">Back</button></div>`;
 
         if (now < cooldownEndTime) {
-            formHTML += `<div style="text-align:center;"><h3>You have already applied for this position.</h3><p>You can apply again in:</p><h2 id="cooldown-timer"></h2></div>`;
-            document.getElementById('form-container').innerHTML = formHTML;
+            const discordId = localStorage.getItem(`last_discord_id_${formType}`);
+            const userSubmission = (discordId && siteSettings.submissions[discordId]) ? [...siteSettings.submissions[discordId]].reverse().find(sub => sub.appType === formType) : null;
+            const status = userSubmission ? userSubmission.status : 'waiting';
             
-            clearInterval(countdownInterval);
-            countdownInterval = setInterval(() => {
-                const remaining = cooldownEndTime - new Date().getTime();
-                if (remaining <= 0) { clearInterval(countdownInterval); renderForm(formType); } 
-                else {
-                    const h = Math.floor(remaining / 3600000);
-                    const m = Math.floor((remaining % 3600000) / 60000);
-                    const s = Math.floor((remaining % 60000) / 1000);
-                    document.getElementById('cooldown-timer').textContent = `${h}h ${m}m ${s}s`;
-                }
-            }, 1000);
+            formHTML += `<div class="status-header status-${status}"><div class="icon"><svg><use xlink:href="#icon-${status}"></use></svg></div><h3>${status.charAt(0).toUpperCase() + status.slice(1)}</h3></div><div style="text-align:center;">`;
+            if (status === 'waiting') {
+                formHTML += `<p>You have already applied for this position.</p><p>You can apply again in:</p><h2 id="cooldown-timer"></h2>`;
+                clearInterval(countdownInterval);
+                countdownInterval = setInterval(() => {
+                    const remaining = cooldownEndTime - new Date().getTime();
+                    if (remaining <= 0) { clearInterval(countdownInterval); renderForm(formType); } 
+                    else {
+                        const h = Math.floor(remaining / 3600000); const m = Math.floor((remaining % 3600000) / 60000); const s = Math.floor((remaining % 60000) / 1000);
+                        const timer = document.getElementById('cooldown-timer');
+                        if (timer) timer.textContent = `${h}h ${m}m ${s}s`;
+                    }
+                }, 1000);
+            } else {
+                formHTML += `<p>A decision has been made on your recent application. You may check the status of all your applications using the button on the homepage.</p>`;
+            }
+            formHTML += `</div>`;
         } else {
             formHTML += `<form id="app-form-${formType}">`;
             data.questions.forEach((q, i) => {
                 const qId = `${formType.substring(0,3)}-q${i}`;
-                const inputElement = (q.type === 'textarea') ? 
-                    `<textarea id="${qId}" rows="5" required data-question-label="${q.label}"></textarea>` : 
-                    `<input type="text" id="${qId}" required data-question-label="${q.label}">`;
-                formHTML += `<div class="question-group" style="margin-bottom: 1rem;"><label for="${qId}">${q.label}</label>${inputElement}</div>`;
+                const el = (q.type === 'textarea') ? `<textarea id="${qId}" rows="5" required data-question-label="${q.label}"></textarea>` : `<input type="text" id="${qId}" required data-question-label="${q.label}">`;
+                formHTML += `<div class="question-group" style="margin-bottom: 1rem;"><label for="${qId}">${q.label}</label>${el}</div>`;
             });
-            formHTML += `<button type="submit" class="btn btn-primary">Submit ${data.title} Application</button></form>`;
-            document.getElementById('form-container').innerHTML = formHTML;
-            document.getElementById(`app-form-${formType}`).addEventListener('submit', (e) => { e.preventDefault(); submitApplication(formType); });
+            formHTML += `<button type="submit" class="btn btn-primary" ${!siteSettings.theme.applicationsOpen ? 'disabled' : ''}>Submit Application</button></form>`;
         }
-    }
-
-    async function checkUserStatus() {
-        const discordId = document.getElementById('status-check-discord-id').value.trim();
-        const resultsContainer = document.getElementById('status-results');
-        if (!discordId) { resultsContainer.innerHTML = `<p>Please enter your Discord ID.</p>`; return; }
-
-        resultsContainer.innerHTML = `<p>Checking...</p>`;
-        await loadDataFromStorage(true);
-        
-        const userSubmissions = siteSettings.submissions[discordId];
-        if (!userSubmissions || userSubmissions.length === 0) {
-            resultsContainer.innerHTML = `<p>No applications found for "${discordId}".</p>`;
-            return;
+        document.getElementById('form-container').innerHTML = formHTML;
+        if (document.getElementById(`app-form-${formType}`)) {
+             document.getElementById(`app-form-${formType}`).addEventListener('submit', (e) => { e.preventDefault(); submitApplication(formType); });
         }
-
-        resultsContainer.innerHTML = userSubmissions.map(sub => {
-            const appConfig = siteSettings.appConfigs[sub.appType];
-            const date = new Date(sub.timestamp).toLocaleString();
-            const statusCapitalized = sub.status.charAt(0).toUpperCase() + sub.status.slice(1);
-            return `
-                <div class="status-result-item">
-                    <div class="status-header status-${sub.status}">
-                        <div class="icon"><svg><use xlink:href="#icon-${sub.status}"></use></svg></div>
-                        <h3>${statusCapitalized}</h3>
-                    </div>
-                    <h4>${appConfig.title} Application</h4>
-                    <p><strong>Submitted On:</strong> ${date}</p>
-                </div>`;
-        }).join('');
     }
 
     function setupAdminPanel() {
-        document.querySelectorAll('.admin-nav-btn').forEach(btn => btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.admin-nav-btn, .admin-section').forEach(el => el.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            const targetId = e.currentTarget.dataset.target;
-            document.getElementById(targetId).classList.add('active');
-            if(targetId === 'admin-submissions') renderSubmissionsAdminView();
-        }));
+        document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.admin-nav-btn, .admin-section').forEach(el => el.classList.remove('active'));
+                const currentButton = e.currentTarget;
+                currentButton.classList.add('active');
+                document.getElementById(currentButton.dataset.target).classList.add('active');
+            });
+        });
+
         renderSubmissionsAdminView();
-        renderWebhookEditor(Object.keys(siteSettings.appConfigs)[0] || 'logs');
+        renderLogs();
+        renderWebhookEditor(Object.keys(siteSettings.appConfigs)[0] || 'support');
         setupApplicationEditorList();
         renderThemeEditor();
+        renderStaffManagementAdmin();
+
+        document.querySelector('.admin-nav-btn[data-target="admin-submissions"]').click();
     }
     
     function renderSubmissionsAdminView() {
         const container = document.getElementById('submissions-container');
-        container.innerHTML = 'Loading submissions...';
-        
-        const allSubmissions = Object.entries(siteSettings.submissions || {}).flatMap(([discordId, subs]) => 
-            subs.map(sub => ({ ...sub, discordId }))
-        ).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-        if (allSubmissions.length === 0) {
-            container.innerHTML = '<p>No submissions yet.</p>'; return;
-        }
-
+        const allSubmissions = Object.entries(siteSettings.submissions || {}).flatMap(([discordId, subs]) => subs.map(sub => ({ ...sub, discordId }))).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        if (allSubmissions.length === 0) { container.innerHTML = '<p>No submissions yet.</p>'; return; }
         container.innerHTML = allSubmissions.map(sub => {
             const appConfig = siteSettings.appConfigs[sub.appType];
-            const date = new Date(sub.timestamp).toLocaleString();
             return `
                 <div class="submission-item">
                     <div class="submission-header">
                         <h4>${appConfig.title} by ${sub.discordId}</h4>
-                        <select onchange="updateSubmissionStatus('${sub.discordId}', '${sub.id}', this.value, '${sub.status}')">
-                            <option value="waiting" ${sub.status === 'waiting' ? 'selected' : ''}>Waiting</option>
-                            <option value="accepted" ${sub.status === 'accepted' ? 'selected' : ''}>Accept</option>
-                            <option value="rejected" ${sub.status === 'rejected' ? 'selected' : ''}>Reject</option>
-                        </select>
+                        <div style="display:flex; gap: 10px; align-items:center;">
+                            <select onchange="updateSubmissionStatus('${sub.discordId}', '${sub.id}', this.value, '${sub.status}')">
+                                <option value="waiting" ${sub.status === 'waiting' ? 'selected' : ''}>Waiting</option>
+                                <option value="accepted" ${sub.status === 'accepted' ? 'selected' : ''}>Accept</option>
+                                <option value="rejected" ${sub.status === 'rejected' ? 'selected' : ''}>Reject</option>
+                            </select>
+                            <button class="btn-danger" onclick="deleteSubmission('${sub.discordId}', '${sub.id}')" style="width:auto; padding: 8px 12px; font-size: 1.2em;" title="Delete Submission">🗑️</button>
+                        </div>
                     </div>
-                    <p><strong>Submitted On:</strong> ${date}</p>
-                    <div class="answers-container">
-                        ${sub.answers.map(a => `<div class="answer-item"><strong>${a.question}</strong><p>${a.answer}</p></div>`).join('')}
-                    </div>
+                    <p><strong>Submitted On:</strong> ${new Date(sub.timestamp).toLocaleString()}</p>
+                    <div class="answers-container">${sub.answers.map(a => `<div class="answer-item"><strong>${a.question}</strong><p>${a.answer}</p></div>`).join('')}</div>
                 </div>`;
         }).join('');
     }
@@ -641,65 +646,42 @@
         const submissionIndex = siteSettings.submissions[discordId].findIndex(s => s.id === submissionId);
         if(submissionIndex > -1) {
             siteSettings.submissions[discordId][submissionIndex].status = newStatus;
-            await saveDataToStorage(null);
             const appTitle = siteSettings.appConfigs[siteSettings.submissions[discordId][submissionIndex].appType].title;
-            await adminLog(`🔄 Application Status Changed`, `**Applicant:** ${discordId}\n**Application:** ${appTitle}\n**Status:** \`${oldStatus}\` → \`${newStatus}\``, 15844367);
-            renderSubmissionsAdminView(); // Refresh view
+            const desc = `**Applicant:** ${discordId}\n**Application:** ${appTitle}\n**Status:** \`${oldStatus}\` → \`${newStatus}\``;
+            await adminLog(`🔄 App Status Changed`, desc, 'status_change', 15844367);
+            await saveDataToStorage(null);
+            renderSubmissionsAdminView();
         }
     }
 
-    function renderWebhookEditor(tabKey) {
-        const tabsContainer = document.querySelector('.webhook-editor-tabs');
-        tabsContainer.innerHTML = '';
-        Object.keys(siteSettings.appConfigs).forEach(key => {
-            tabsContainer.innerHTML += `<button class="webhook-tab" data-tab="${key}">${siteSettings.appConfigs[key].title}</button>`;
-        });
-        tabsContainer.innerHTML += `<button class="webhook-tab" data-tab="logs">Global Logs</button>`;
-        document.querySelectorAll('.webhook-tab').forEach(tab => {
-            tab.classList.toggle('active', tab.dataset.tab === tabKey);
-            tab.addEventListener('click', (e) => renderWebhookEditor(e.currentTarget.dataset.tab));
-        });
-
-        const container = document.getElementById('webhook-editor-container');
-        let html = '';
-        if (tabKey === 'logs') {
-            const config = siteSettings.logWebhooks || {};
-            html = `<h3>Global Logging</h3>
-                    <div><label>Site Visit Log URL</label><input type="text" data-key="visitUrl" value="${config.visitUrl || ''}"></div>
-                    <div><label>Admin Activity Log URL</label><input type="text" data-key="adminLogUrl" value="${config.adminLogUrl || ''}"></div>`;
-        } else {
-            const config = siteSettings.appConfigs[tabKey];
-            if (!config) return;
-            html = `<h3>${config.title} Settings</h3>
-                    <div><label>Webhook URL</label><input type="text" data-key="webhookUrl" value="${config.webhookUrl || ''}"></div>
-                    <div><label>Bot Name</label><input type="text" data-key="username" value="${config.username || ''}"></div>
-                    <div><label>Bot Avatar URL</label><input type="text" data-key="avatarUrl" value="${config.avatarUrl || ''}"></div>
-                    <div><label>Embed Color</label><input type="color" data-key="embedColor" value="${config.embedColor || '#ffffff'}" style="padding:0; height:40px; background: none;"></div>
-                    <div><label>Embed Title</label><input type="text" data-key="embedTitle" value="${config.embedTitle || ''}"></div>`;
-        }
-        container.innerHTML = html;
-        container.dataset.activeTab = tabKey;
-        container.querySelectorAll('input').forEach(input => input.addEventListener('input', updateWebhookPreview));
-        updateWebhookPreview();
+    async function deleteSubmission(discordId, submissionId) {
+        const key = prompt("Enter the security key to delete this submission:");
+        if (key === DELETE_KEY) {
+            const subIndex = siteSettings.submissions[discordId].findIndex(s => s.id === submissionId);
+            if (subIndex > -1) {
+                const appTitle = siteSettings.appConfigs[siteSettings.submissions[discordId][subIndex].appType].title;
+                siteSettings.submissions[discordId].splice(subIndex, 1);
+                if (siteSettings.submissions[discordId].length === 0) delete siteSettings.submissions[discordId];
+                await adminLog("🗑️ Submission Deleted", `App for **${appTitle}** by **${discordId}** was deleted.`, 'delete', 15158332);
+                await saveDataToStorage(null);
+                renderSubmissionsAdminView();
+            }
+        } else if (key) { alert("Incorrect security key."); }
     }
-
-    function updateWebhookPreview() {
-        const activeTab = document.getElementById('webhook-editor-container').dataset.activeTab;
-        if (!activeTab || activeTab === 'logs' || !siteSettings.appConfigs[activeTab]) { 
-            document.querySelector('.discord-preview-container').style.opacity = '0.5'; return; 
-        }
-        document.querySelector('.discord-preview-container').style.opacity = '1';
-        const config = siteSettings.appConfigs[activeTab];
-        const tempConfig = {};
-        document.querySelectorAll(`#webhook-editor-container [data-key]`).forEach(input => tempConfig[input.dataset.key] = input.value);
-        document.getElementById('preview-username').textContent = tempConfig.username || "Bot";
-        document.getElementById('preview-avatar').src = tempConfig.avatarUrl || "";
-        document.getElementById('preview-embed-title').textContent = (tempConfig.embedTitle || "").replace('{role}', config.title);
-        document.getElementById('preview-embed').style.borderLeftColor = tempConfig.embedColor;
+    
+    function renderLogs() {
+        const container = document.getElementById('logs-container');
+        if (!siteSettings.logs || siteSettings.logs.length === 0) { container.innerHTML = '<p>No log entries found.</p>'; return; }
+        container.innerHTML = siteSettings.logs.map(log => `
+            <div class="log-item log-type-${log.type}">
+                <p><strong>${log.title}</strong></p>
+                <p>${log.description.replace(/\n/g, '<br>')}</p>
+                <p class="timestamp">${new Date(log.timestamp).toLocaleString()}</p>
+            </div>`).join('');
     }
-
+    
     function renderThemeEditor() {
-        const theme = siteSettings.theme || defaultSettings.theme;
+        const theme = siteSettings.theme;
         document.getElementById('theme-applicationsOpen').checked = theme.applicationsOpen;
         document.getElementById('theme-logoUrl').value = theme.logoUrl;
         document.getElementById('theme-subtitle').value = theme.subtitle;
@@ -707,148 +689,529 @@
         document.getElementById('theme-glowColor').value = theme.glowColor;
         document.getElementById('theme-backgroundStart').value = theme.backgroundStart;
         document.getElementById('theme-backgroundEnd').value = theme.backgroundEnd;
-        
-        document.querySelectorAll('#admin-theme input').forEach(input => {
+
+        document.querySelectorAll('#admin-theme input, #admin-theme textarea').forEach(input => {
             input.addEventListener('input', () => {
                 const key = input.id.replace('theme-', '');
                 const value = input.type === 'checkbox' ? input.checked : input.value;
                 const oldStatus = siteSettings.theme.applicationsOpen;
-
                 siteSettings.theme[key] = value;
-                
                 if (key === 'applicationsOpen' && value !== oldStatus) {
-                    adminLog("📢 Public Applications Toggled", `Applications have been ${value ? 'Opened' : 'Closed'}.`, value ? 3066993 : 15158332);
+                    adminLog("📢 Apps Toggled", `Applications are now **${value ? 'Opened' : 'Closed'}**.`, 'info', value ? 3066993 : 15158332);
                 }
                 applyTheme(siteSettings);
             });
         });
     }
+
+    // ===================================================================================
+    // STAFF SYSTEM - FRONTEND
+    // ===================================================================================
     
-    async function clearAllSubmissions() {
-        if (confirm('Are you sure you want to delete ALL submissions? This cannot be undone.')) {
-            siteSettings.submissions = {};
-            const success = await saveDataToStorage(null);
-            if (success) { 
-                alert('All submissions cleared.');
-                await adminLog("🗑️ Submissions Cleared", "All applications have been permanently deleted.", 15105570);
-                renderSubmissionsAdminView(); 
-            }
+    function handleStaffLogin() {
+        const staffIdInput = document.getElementById('staff-id-input').value.trim().toLowerCase().replace(/\s+/g, '-');
+        if (!staffIdInput) {
+            alert("Please enter your Staff ID.");
+            return;
+        }
+
+        if (siteSettings.staffSystem.users[staffIdInput]) {
+            sessionStorage.setItem('currentStaffId', staffIdInput);
+            showPage('staff-tasks-page');
+        } else {
+            alert("Invalid Staff ID. Please check the ID and try again.");
         }
     }
 
-    async function resetAllData() {
-        if (confirm('Are you sure you want to reset ALL online settings to the original default? This will also clear all submissions. This cannot be undone.')) {
-            siteSettings = JSON.parse(JSON.stringify(defaultSettings));
-            const success = await saveDataToStorage(null);
-            if (success) {
-                await adminLog("🚨 FACTORY RESET 🚨", "All site settings and submissions have been reset to default.", 12320855);
-                location.reload();
+    function renderStaffTasksPage() {
+        const container = document.getElementById('staff-tasks-page');
+        const staffId = sessionStorage.getItem('currentStaffId');
+        if (!staffId || !siteSettings.staffSystem.users[staffId]) {
+            showPage('staff-login-page');
+            return;
+        }
+
+        const user = siteSettings.staffSystem.users[staffId];
+        const role = siteSettings.staffSystem.roles[user.roleId] || { name: 'No Role', color: '#fff' };
+        
+        let html = `<div class="page-header">
+            <div>
+                <h1>${user.name}'s Tasks</h1>
+                <p style="margin-top:-10px; color:${role.color};" class="${role.shine ? 'shine' : ''}">Role: ${role.name}</p>
+            </div>
+            <button class="btn btn-secondary" onclick="showSelection()">Logout</button>
+        </div>`;
+        
+        const assignedTasks = Object.entries(siteSettings.staffSystem.tasks || {}).filter(([_, task]) => task.assignedTo.includes(staffId));
+
+        if (assignedTasks.length === 0) {
+            html += `<p>You have no tasks assigned to you. Great job!</p>`;
+        } else {
+            html += assignedTasks.map(([taskId, task]) => renderTaskItem(taskId, task, staffId)).join('');
+        }
+        container.innerHTML = html;
+    }
+
+    function renderTaskItem(taskId, task, staffId) {
+        const userSubmissions = (task.submissions || []).filter(sub => sub.userId === staffId);
+        const progress = userSubmissions.length;
+        const goal = task.goal;
+        const progressPercent = goal > 0 ? (progress / goal) * 100 : 100;
+
+        return `
+        <div class="task-item">
+            <h4>${task.title} (${progress}/${goal})</h4>
+            <p>${task.description || 'Complete the objective.'}</p>
+            <div class="task-progress-bar"><div class="task-progress" style="width: ${progressPercent}%;"></div></div>
+            ${progress >= goal ? '<p style="color:var(--success-color); margin-top:10px;">Task Complete!</p>' : `
+            <div style="margin-top: 15px;">
+                <label for="proof-input-${taskId}">Submit Proof (Screenshot)</label>
+                <input type="file" id="proof-input-${taskId}" accept="image/*" onchange="submitTaskProof(this, '${taskId}')">
+                <small style="color:var(--text-secondary)">Max file size: ${MAX_UPLOAD_SIZE_MB}MB</small>
+            </div>
+            `}
+        </div>`;
+    }
+    
+    async function submitTaskProof(fileInput, taskId) {
+        const staffId = sessionStorage.getItem('currentStaffId');
+        const file = fileInput.files[0];
+
+        if (!file) return;
+
+        if (file.size > MAX_UPLOAD_SIZE_MB * 1024 * 1024) {
+            alert(`File is too large. Please upload an image smaller than ${MAX_UPLOAD_SIZE_MB}MB.`);
+            fileInput.value = '';
+            return;
+        }
+
+        fileInput.disabled = true;
+        const originalLabel = fileInput.previousElementSibling;
+        if(originalLabel) originalLabel.textContent = "Uploading...";
+        
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            const base64String = event.target.result;
+            
+            const task = siteSettings.staffSystem.tasks[taskId];
+            const user = siteSettings.staffSystem.users[staffId];
+            if (task) {
+                if (!task.submissions) task.submissions = [];
+                task.submissions.push({
+                    userId: staffId,
+                    userName: user.name,
+                    proof: base64String,
+                    timestamp: new Date().toISOString()
+                });
+                await adminLog('✅ Task Proof Submitted', `**${user.name}** submitted proof for task:\n*${task.title}*`, 'task_completion', 8311585);
+                await saveDataToStorage(null);
+                renderStaffTasksPage();
             }
+        };
+        reader.onerror = () => {
+             alert("Error reading file. Please try again.");
+             fileInput.disabled = false;
+             if(originalLabel) originalLabel.textContent = "Submit Proof (Screenshot)";
+        }
+        reader.readAsDataURL(file);
+    }
+    
+    // ===================================================================================
+    // STAFF SYSTEM - BACKEND (ADMIN PANEL)
+    // ===================================================================================
+
+    function renderStaffManagementAdmin() {
+        const container = document.getElementById('admin-staff-management');
+        container.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                container.querySelectorAll('.admin-tab, .admin-tab-content').forEach(el => el.classList.remove('active'));
+                const currentTab = e.currentTarget;
+                currentTab.classList.add('active');
+                container.querySelector(`#${currentTab.dataset.target}`).classList.add('active');
+            });
+        });
+        
+        renderAdminUsers();
+        renderAdminRoles();
+        renderAdminTasks();
+
+        container.querySelector('.admin-tab[data-target="staff-users"]').click();
+    }
+    
+    function renderAdminUsers() {
+        const container = document.getElementById('staff-users');
+        const users = siteSettings.staffSystem.users || {};
+        const roles = siteSettings.staffSystem.roles || {};
+        let rolesDropdown = Object.keys(roles).map(roleId => `<option value="${roleId}">${roles[roleId].name}</option>`).join('');
+
+        let html = `<h3>Users</h3>
+            <div class="admin-list-item">
+                <h4>Add New User</h4>
+                <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items:flex-end;">
+                    <div><label>User Name</label><input type="text" id="new-user-name" placeholder="John Doe"></div>
+                    <div><label>Assign Role</label><select id="new-user-role">${rolesDropdown}</select></div>
+                    <button class="btn btn-primary" style="width:auto;" onclick="addStaffUser()">Add User</button>
+                </div>
+            </div>`;
+
+        html += Object.entries(users).map(([userId, user]) => {
+            const role = roles[user.roleId];
+            return `
+            <div class="admin-list-item">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h4 style="color:${role ? role.color : 'inherit'}" class="${role && role.shine ? 'shine' : ''}">${user.name}</h4>
+                        <p style="font-size:0.9em; color:var(--text-secondary);">ID: ${userId} <button class="btn-secondary" style="padding: 2px 6px; font-size: 0.8em; margin-left: 10px;" onclick="copyToClipboard('${userId}')">Copy</button></p>
+                    </div>
+                    <button class="btn-danger" style="width:auto;" onclick="deleteStaffUser('${userId}')">Delete</button>
+                </div>
+            </div>`
+        }).join('');
+        container.innerHTML = html;
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Copied to clipboard!');
+        }, () => {
+            alert('Failed to copy.');
+        });
+    }
+
+    async function addStaffUser() {
+        const name = document.getElementById('new-user-name').value.trim();
+        const roleId = document.getElementById('new-user-role').value;
+        if (!name || !roleId) { alert("Name and role are required."); return; }
+        const userId = name.toLowerCase().replace(/\s+/g, '-');
+        if (siteSettings.staffSystem.users[userId]) { alert("A user with this name already exists."); return; }
+
+        siteSettings.staffSystem.users[userId] = { name, roleId };
+        const roleName = siteSettings.staffSystem.roles[roleId].name;
+        await adminLog('👤 Staff User Added', `**Name:** ${name}\n**ID:** ${userId}\n**Role:** ${roleName}`, 'user_management');
+        await saveDataToStorage(null);
+        renderAdminUsers();
+    }
+
+    async function deleteStaffUser(userId) {
+        const userName = siteSettings.staffSystem.users[userId].name;
+        if (confirm(`Are you sure you want to delete user ${userName}?`)) {
+            Object.values(siteSettings.staffSystem.tasks).forEach(task => {
+                task.assignedTo = task.assignedTo.filter(id => id !== userId);
+            });
+            delete siteSettings.staffSystem.users[userId];
+            await adminLog('🗑️ Staff User Deleted', `**Name:** ${userName}\n**ID:** ${userId}`, 'delete');
+            await saveDataToStorage(null);
+            renderAdminUsers();
+            renderAdminTasks();
+        }
+    }
+
+    function renderAdminRoles() {
+        const container = document.getElementById('staff-roles');
+        const roles = siteSettings.staffSystem.roles || {};
+        let html = `<h3>Roles</h3>
+            <div class="admin-list-item">
+                <h4>Create New Role</h4>
+                <div style="display:grid; grid-template-columns: 1fr auto auto auto; gap: 10px; align-items:flex-end;">
+                    <div><label>Role Name</label><input type="text" id="new-role-name" placeholder="Moderator"></div>
+                    <div><label>Color</label><input type="color" id="new-role-color" value="#89b4fa" style="padding:0; height:40px; width:60px; background: none;"></div>
+                    <div style="display:flex; align-items:center; gap:10px; height: 40px;"><label>Shine</label><input type="checkbox" id="new-role-shine" style="width:auto;"></div>
+                    <button class="btn btn-primary" style="width:auto;" onclick="addStaffRole()">Create</button>
+                </div>
+            </div>`;
+            
+        html += Object.entries(roles).map(([roleId, role]) => `
+            <div class="admin-list-item">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h4 style="color:${role.color};" class="${role.shine ? 'shine' : ''}">${role.name}</h4>
+                        <p style="font-size:0.9em; color:var(--text-secondary);">ID: ${roleId}</p>
+                    </div>
+                    <button class="btn-danger" style="width:auto;" onclick="deleteStaffRole('${roleId}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+        container.innerHTML = html;
+    }
+
+    async function addStaffRole() {
+        const name = document.getElementById('new-role-name').value.trim();
+        if (!name) { alert("Role name is required."); return; }
+        const roleId = name.toLowerCase().replace(/\s+/g, '-');
+        if (siteSettings.staffSystem.roles[roleId]) { alert("A role with this name already exists."); return; }
+
+        siteSettings.staffSystem.roles[roleId] = {
+            name: name,
+            color: document.getElementById('new-role-color').value,
+            shine: document.getElementById('new-role-shine').checked
+        };
+        await adminLog('🎨 Staff Role Created', `**Name:** ${name}\n**ID:** ${roleId}`, 'user_management');
+        await saveDataToStorage(null);
+        renderAdminRoles();
+        renderAdminUsers();
+    }
+
+    async function deleteStaffRole(roleId) {
+        const roleName = siteSettings.staffSystem.roles[roleId].name;
+        if (confirm(`Deleting role '${roleName}' will unassign it from all users. Are you sure?`)) {
+            Object.values(siteSettings.staffSystem.users).forEach(user => {
+                if (user.roleId === roleId) user.roleId = null;
+            });
+            delete siteSettings.staffSystem.roles[roleId];
+            await adminLog('🗑️ Staff Role Deleted', `**Name:** ${roleName}\n**ID:** ${roleId}`, 'delete');
+            await saveDataToStorage(null);
+            renderAdminRoles();
+            renderAdminUsers();
+        }
+    }
+
+    function renderAdminTasks() {
+        const container = document.getElementById('staff-tasks');
+        const tasks = siteSettings.staffSystem.tasks || {};
+        const users = siteSettings.staffSystem.users || {};
+        let usersOptions = Object.entries(users).map(([userId, user]) => `<option value="${userId}">${user.name}</option>`).join('');
+
+        let templatesHTML = `<h4>GTPS Task Templates</h4><div style="display:flex; flex-wrap:wrap; gap:10px;">` +
+            Object.keys(taskTemplates).map(key => `<button class="btn btn-secondary" onclick="applyTaskTemplate('${key}')">${taskTemplates[key].title}</button>`).join('') +
+            `</div><hr style="border-color:var(--border-color); margin: 20px 0;">`;
+
+        let html = `<h3>Tasks</h3>
+            <div class="admin-list-item">
+                <h4>Create New Task</h4>
+                ${templatesHTML}
+                <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
+                    <div><label>Title</label><input type="text" id="new-task-title" placeholder="Help 5 new players"></div>
+                    <div><label>Description</label><input type="text" id="new-task-desc" placeholder="Provide assistance in the starting area."></div>
+                    <div><label>Goal (e.g., 5)</label><input type="number" id="new-task-goal" value="5"></div>
+                    <div><label>Assign To (Hold Ctrl/Cmd to select multiple)</label><select id="new-task-assign" multiple style="height: 100px;">${usersOptions}</select></div>
+                    <button class="btn btn-primary" onclick="addStaffTask()">Create Task</button>
+                </div>
+            </div>`;
+            
+        html += Object.entries(tasks).sort((a,b) => (b[1].submissions?.length || 0) - (a[1].submissions?.length || 0)).map(([taskId, task]) => `
+            <div class="admin-list-item">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                     <h4>${task.title} (Goal: ${task.goal})</h4>
+                     <button class="btn-danger" style="width:auto;" onclick="deleteStaffTask('${taskId}')">Delete</button>
+                </div>
+                <p><strong>Assigned to:</strong> ${task.assignedTo.map(id => users[id]?.name || 'Unknown').join(', ')}</p>
+                <h5>Submissions (${task.submissions?.length || 0})</h5>
+                ${(task.submissions && task.submissions.length > 0) ? task.submissions.map(sub => `
+                    <div class="answer-item">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong>${sub.userName} on ${new Date(sub.timestamp).toLocaleDateString()}</strong>
+                            <button class="btn-secondary" onclick="showImagePreview('${sub.proof}')">View Proof</button>
+                        </div>
+                    </div>
+                `).join('') : '<p>No proofs submitted yet.</p>'}
+            </div>
+        `).join('');
+        container.innerHTML = html;
+    }
+    
+    function showImagePreview(base64Image) {
+        document.getElementById('preview-image').src = base64Image;
+        document.getElementById('image-preview-modal').style.display = 'flex';
+    }
+
+    const taskTemplates = {
+        helpNewbies: { title: 'Help 10 New Players', description: 'Assist new players in the starting area with questions and items.', goal: 10 },
+        resolveTickets: { title: 'Resolve 5 Support Tickets', description: 'Handle and close 5 support tickets from players.', goal: 5 },
+        hostEvent: { title: 'Host a Mini-Event', description: 'Plan and execute a small, engaging event for the community.', goal: 1 },
+        patrol: { title: 'Complete a 2-Hour Patrol', description: 'Actively moderate the main worlds for 2 hours, looking for rule-breakers.', goal: 1 }
+    };
+
+    function applyTaskTemplate(key) {
+        const template = taskTemplates[key];
+        if (template) {
+            document.getElementById('new-task-title').value = template.title;
+            document.getElementById('new-task-desc').value = template.description;
+            document.getElementById('new-task-goal').value = template.goal;
+        }
+    }
+
+    async function addStaffTask() {
+        const title = document.getElementById('new-task-title').value.trim();
+        if (!title) { alert("Task title is required."); return; }
+        const taskId = 'task-' + generateUUID();
+        
+        const assignedTo = Array.from(document.getElementById('new-task-assign').selectedOptions).map(opt => opt.value);
+        if(assignedTo.length === 0) { alert("You must assign the task to at least one user."); return; }
+
+        if (!siteSettings.staffSystem.tasks) siteSettings.staffSystem.tasks = {};
+        siteSettings.staffSystem.tasks[taskId] = {
+            title: title,
+            description: document.getElementById('new-task-desc').value.trim(),
+            goal: parseInt(document.getElementById('new-task-goal').value) || 1,
+            assignedTo: assignedTo,
+            submissions: []
+        };
+        const userNames = assignedTo.map(id => siteSettings.staffSystem.users[id].name).join(', ');
+        await adminLog('📋 Staff Task Created', `**Title:** ${title}\n**Assigned To:** ${userNames}`, 'user_management');
+        await saveDataToStorage(null);
+        renderAdminTasks();
+    }
+
+    async function deleteStaffTask(taskId) {
+        const taskTitle = siteSettings.staffSystem.tasks[taskId].title;
+        if (confirm(`Are you sure you want to delete the task '${taskTitle}' and all its submissions?`)) {
+            delete siteSettings.staffSystem.tasks[taskId];
+            await adminLog('🗑️ Staff Task Deleted', `**Title:** ${taskTitle}`, 'delete');
+            await saveDataToStorage(null);
+            renderAdminTasks();
         }
     }
     
+    // ===================================================================================
+    // RESTORED: APPLICATION & WEBHOOK EDITORS
+    // ===================================================================================
+
+    function renderWebhookEditor(initialTab) {
+        const tabsContainer = document.querySelector('#admin-webhooks .webhook-editor-tabs');
+        const editorContainer = document.getElementById('webhook-editor-container');
+        tabsContainer.innerHTML = '';
+
+        Object.keys(siteSettings.appConfigs).forEach(key => {
+            tabsContainer.innerHTML += `<button class="webhook-tab" data-key="${key}">${siteSettings.appConfigs[key].title}</button>`;
+        });
+        tabsContainer.innerHTML += `<button class="webhook-tab" data-key="logs">Admin Logs</button>`;
+        
+        const renderContent = (tabKey) => {
+            let content = '';
+            if (tabKey === 'logs') {
+                const logHooks = siteSettings.logWebhooks || { adminLogUrl: '' };
+                content = `
+                    <h3>Admin Activity Logs</h3>
+                    <p>This webhook receives logs for admin logins, submission changes, and settings updates.</p>
+                    <div><label>Admin Log Webhook URL</label><input type="text" value="${logHooks.adminLogUrl}" oninput="siteSettings.logWebhooks.adminLogUrl = this.value;"></div>`;
+            } else {
+                const config = siteSettings.appConfigs[tabKey];
+                content = `
+                    <h3>${config.title} Application Webhook</h3>
+                    <div><label>Webhook URL</label><input type="text" value="${config.webhookUrl || ''}" oninput="siteSettings.appConfigs['${tabKey}'].webhookUrl = this.value;"></div>
+                    <div><label>Bot Username</label><input type="text" value="${config.username}" oninput="siteSettings.appConfigs['${tabKey}'].username = this.value;"></div>
+                    <div><label>Bot Avatar URL</label><input type="text" value="${config.avatarUrl}" oninput="siteSettings.appConfigs['${tabKey}'].avatarUrl = this.value;"></div>
+                    <div><label>Embed Color</label><input type="color" value="${config.embedColor}" style="padding:0; height:40px; width:100%;" oninput="siteSettings.appConfigs['${tabKey}'].embedColor = this.value;"></div>`;
+            }
+            editorContainer.innerHTML = content;
+        }
+
+        tabsContainer.querySelectorAll('.webhook-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                tabsContainer.querySelectorAll('.webhook-tab').forEach(t => t.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                renderContent(e.currentTarget.dataset.key);
+            });
+        });
+        
+        const tabToActivate = tabsContainer.querySelector(`.webhook-tab[data-key="${initialTab}"]`) || tabsContainer.firstChild;
+        if(tabToActivate) tabToActivate.click();
+    }
+
     function setupApplicationEditorList() {
         const container = document.getElementById('editor-selection-buttons');
-        container.innerHTML = '<h3>Select Application to Edit</h3>';
+        container.innerHTML = '';
         Object.keys(siteSettings.appConfigs).forEach(key => {
-            container.innerHTML += `<button class="btn btn-secondary" onclick="renderApplicationEditor('${key}')">Edit ${siteSettings.appConfigs[key].title}</button>`;
+            container.innerHTML += `<div class="admin-list-item" style="display:flex; justify-content:space-between; align-items:center;">
+                <h4>${siteSettings.appConfigs[key].title}</h4>
+                <button class="btn-secondary" onclick="renderApplicationEditor('${key}')">Edit</button>
+            </div>`;
         });
-        container.innerHTML += `<hr style="border-color: var(--border-color); margin: 20px 0;"><button class="btn btn-primary" onclick="addApplicationType()">+ Add New Application Type</button>`;
-        cancelEdit();
+        container.innerHTML += `<button class="btn btn-primary" onclick="addApplicationType()">Add New Application Type</button>`;
+        document.getElementById('application-editor-view').style.display = 'none';
     }
 
-    function renderApplicationEditor(appKey) { 
-        const data = siteSettings.appConfigs[appKey];
+    function renderApplicationEditor(appKey) {
+        const config = JSON.parse(JSON.stringify(siteSettings.appConfigs[appKey])); // Deep copy
         const view = document.getElementById('application-editor-view');
-        document.getElementById('editor-selection-buttons').style.display = 'none';
         
-        let questionsHTML = data.questions.map(q => `
-            <div class="editor-question-item">
-                <input class="question-label-input" value="${q.label.replace(/"/g, '&quot;')}">
-                <select class="question-type-select">
-                    <option value="text" ${q.type === 'text' ? 'selected' : ''}>Text</option>
-                    <option value="textarea" ${q.type === 'textarea' ? 'selected' : ''}>Textarea</option>
-                </select>
-                <button class="btn btn-danger" onclick="this.parentElement.remove()" title="Delete Question">✖</button>
-            </div>`).join('');
+        let questionsHTML = config.questions.map((q, index) => `
+            <div class="admin-list-item" data-question-index="${index}">
+                <div style="margin-bottom:1rem;"><label>Question Label</label><input type="text" value="${q.label}" class="q-label"></div>
+                <div><label>Question Type</label><select class="q-type"><option value="text" ${q.type === 'text' ? 'selected':''}>Text Input</option><option value="textarea" ${q.type === 'textarea' ? 'selected':''}>Text Area</option></select></div>
+                <button class="btn-danger" style="margin-top:10px; width:auto;" onclick="this.parentElement.remove()">Remove</button>
+            </div>
+        `).join('');
 
         view.innerHTML = `
-            <h3>Editing: ${data.title}</h3>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                <div><label>Title</label><input id="edit-title" value="${data.title.replace(/"/g, '&quot;')}"></div>
-                <div><label>Description</label><input id="edit-desc" value="${data.desc.replace(/"/g, '&quot;')}"></div>
+            <h3>Editing: ${config.title}</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div><label>Title</label><input type="text" id="edit-app-title" value="${config.title}"></div>
+                <div><label>Description</label><input type="text" id="edit-app-desc" value="${config.desc}"></div>
             </div>
-            <div><label>Icon (SVG Code)</label><textarea id="edit-icon" rows="3">${data.icon}</textarea></div>
-            <h4 style="margin-top: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Questions</h4>
-            <div id="question-editor-container" style="margin-top: 1.5rem;">${questionsHTML}</div>
-            <div style="display:flex; gap: 1rem; margin-top: 1.5rem;">
-                <button class="btn btn-secondary" onclick="addQuestionToEditor()">+ Add Question</button>
-                <button class="btn btn-primary" id="save-app-btn" style="flex-grow: 1;" onclick="saveApplicationChanges('${appKey}', this)">Save Changes</button>
-                <button class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
-            </div>
-            <hr style="border-color: var(--border-color); margin: 20px 0;">
-            <button class="btn btn-danger" onclick="deleteApplication('${appKey}', this)">Delete This Application</button>
-        `;
+            <h3>Questions</h3>
+            <div id="questions-editor-container">${questionsHTML}</div>
+            <button class="btn btn-secondary" onclick="addQuestionToEditor()">Add Question</button>
+            <hr style="border-color:var(--border-color); margin: 20px 0;">
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-primary" onclick="saveApplicationChanges('${appKey}', this)">Save Changes</button>
+                <button class="btn-secondary" onclick="cancelEdit()">Cancel</button>
+                <button class="btn-danger" onclick="deleteApplication('${appKey}', this)">Delete Application</button>
+            </div>`;
         view.style.display = 'block';
+        document.getElementById('editor-selection-buttons').style.display = 'none';
     }
 
-    function addQuestionToEditor() { 
-        const container = document.getElementById('question-editor-container');
-        const newItem = document.createElement('div');
-        newItem.className = 'editor-question-item';
-        newItem.innerHTML = `
-            <input class="question-label-input" placeholder="New Question Label">
-            <select class="question-type-select"><option value="text">Text</option><option value="textarea" selected>Textarea</option></select>
-            <button class="btn btn-danger" onclick="this.parentElement.remove()" title="Delete Question">✖</button>`;
-        container.appendChild(newItem);
+    function addQuestionToEditor() {
+        const container = document.getElementById('questions-editor-container');
+        const index = container.children.length;
+        container.innerHTML += `
+            <div class="admin-list-item" data-question-index="${index}">
+                <div style="margin-bottom:1rem;"><label>Question Label</label><input type="text" placeholder="Your new question" class="q-label"></div>
+                <div><label>Question Type</label><select class="q-type"><option value="text">Text Input</option><option value="textarea">Text Area</option></select></div>
+                <button class="btn-danger" style="margin-top:10px; width:auto;" onclick="this.parentElement.remove()">Remove</button>
+            </div>`;
     }
 
-    function cancelEdit() { 
-        document.getElementById('application-editor-view').style.display = 'none'; 
-        document.getElementById('editor-selection-buttons').style.display = 'block'; 
+    function cancelEdit() {
+        document.getElementById('editor-selection-buttons').style.display = 'block';
+        document.getElementById('application-editor-view').style.display = 'none';
     }
 
     async function saveApplicationChanges(appKey, saveButton) {
-        const config = siteSettings.appConfigs[appKey];
-        config.title = document.getElementById('edit-title').value;
-        config.desc = document.getElementById('edit-desc').value;
-        config.icon = document.getElementById('edit-icon').value;
-        
-        const questions = [];
-        document.querySelectorAll('.editor-question-item').forEach((item) => {
-            const label = item.querySelector('.question-label-input').value;
-            const type = item.querySelector('.question-type-select').value;
-            if (label) { questions.push({ label, type }); }
+        const view = document.getElementById('application-editor-view');
+        const newConfig = {
+            ...siteSettings.appConfigs[appKey],
+            title: view.querySelector('#edit-app-title').value,
+            desc: view.querySelector('#edit-app-desc').value,
+            questions: []
+        };
+        view.querySelectorAll('#questions-editor-container .admin-list-item').forEach(qElem => {
+            newConfig.questions.push({
+                label: qElem.querySelector('.q-label').value,
+                type: qElem.querySelector('.q-type').value
+            });
         });
-        config.questions = questions;
-
+        siteSettings.appConfigs[appKey] = newConfig;
+        await adminLog('📝 Application Edited', `**${newConfig.title}** application was updated.`, 'info');
         await saveAllSettings(saveButton);
         setupApplicationEditorList();
     }
-
+    
     async function addApplicationType() {
-        const key = prompt("Enter a unique short key for the new application (e.g., 'moderator', no spaces).");
-        if (key && !siteSettings.appConfigs[key]) {
-            siteSettings.appConfigs[key] = JSON.parse(JSON.stringify(defaultSettings.appConfigs.support));
-            siteSettings.appConfigs[key].title = "New Application";
-            siteSettings.appConfigs[key].desc = "A new role to apply for.";
-            siteSettings.appConfigs[key].questions = [{label: "Your Discord ID (e.g., user#0001)", type: "text"}];
-            await saveAllSettings(null);
+        const newKey = prompt("Enter a unique, one-word key for this new application type (e.g., 'moderator'):")?.toLowerCase().trim();
+        if (newKey && !siteSettings.appConfigs[newKey]) {
+            siteSettings.appConfigs[newKey] = JSON.parse(JSON.stringify(defaultSettings.appConfigs.staff));
+            siteSettings.appConfigs[newKey].title = newKey.charAt(0).toUpperCase() + newKey.slice(1);
+            await adminLog('➕ Application Added', `New application type **${newKey}** was created.`, 'info');
+            await saveDataToStorage(null);
             setupApplicationEditorList();
-            renderApplicationEditor(key);
-        } else if (key) {
-            alert("Error: That key already exists.");
+            renderApplicationEditor(newKey);
+        } else if (newKey) {
+            alert('This key already exists.');
         }
     }
 
     async function deleteApplication(appKey, button) {
-        if (confirm(`Are you sure you want to permanently delete the '${siteSettings.appConfigs[appKey].title}' application?`)) {
+        if (confirm(`Are you sure you want to permanently delete the '${siteSettings.appConfigs[appKey].title}' application? This cannot be undone.`)) {
+            const title = siteSettings.appConfigs[appKey].title;
             delete siteSettings.appConfigs[appKey];
+            await adminLog('🗑️ Application Deleted', `Application type **${title}** was deleted.`, 'delete');
             await saveAllSettings(button);
             setupApplicationEditorList();
-            setupAdminPanel();
         }
     }
-    </script>
+    
+</script>
 </body>
 </html>
