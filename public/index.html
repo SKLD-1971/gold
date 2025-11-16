@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application Center</title>
+    <title>Gold Application </title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
@@ -102,14 +102,8 @@
         .webhook-tab, .admin-tab { padding: 10px 15px; background: none; border: none; color: var(--text-secondary); cursor: pointer; border-radius: 6px 6px 0 0; }
         .webhook-tab.active, .admin-tab.active { background: var(--surface-color); border: 1px solid var(--border-color); border-bottom: 1px solid var(--surface-color); color: var(--primary-color); }
         
-        .submission-item, .status-result-item, .admin-list-item { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 15px; }
+        .submission-item, .admin-list-item { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 15px; }
         .submission-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom:10px; border-bottom:1px solid var(--border-color); }
-        .status-header { display: flex; flex-direction:column; align-items: center; text-align:center; gap: 12px; margin: 20px 0; }
-        .status-header .icon svg { width: 60px; height: 60px; }
-        .status-header h3 { margin: 10px 0 0 0; font-size: 2em; }
-        .status-accepted h3 { color: var(--success-color); } .status-accepted .icon { color: var(--success-color); }
-        .status-rejected h3 { color: var(--danger-color); } .status-rejected .icon { color: var(--danger-color); }
-        .status-waiting h3 { color: var(--waiting-color); } .status-waiting .icon { color: var(--waiting-color); }
         .answer-item { margin-bottom: 12px; }
         .answer-item strong { color: var(--text-secondary); display: block; margin-bottom: 4px; }
         .answer-item p { margin: 0; background-color: var(--input-bg); padding: 10px; border-radius: 6px; white-space: pre-wrap; word-break: break-word; }
@@ -124,15 +118,6 @@
         .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--success-color); } input:checked + .slider:before { transform: translateX(26px); }
 
-        #logs-container .log-item { background: rgba(0,0,0,0.1); border-left: 4px solid var(--info-color); padding: 15px; margin-bottom: 10px; border-radius: 4px; transition: all 0.3s ease; }
-        #logs-container .log-item:hover { background: rgba(0,0,0,0.2); }
-        #logs-container .log-item p { margin: 0 0 5px 0; word-wrap: break-word; } #logs-container .log-item .timestamp { font-size: 0.8em; color: var(--text-secondary); }
-        .log-item.log-type-login { border-color: var(--success-color); }
-        .log-item.log-type-delete { border-color: var(--danger-color); }
-        .log-item.log-type-status_change { border-color: var(--waiting-color); }
-        .log-item.log-type-task_completion { border-color: var(--staff-color); }
-        .log-item.log-type-user_management { border-color: var(--primary-color); }
-        
         .task-item { border-left: 4px solid var(--primary-color); padding-left: 15px; margin-bottom: 25px; }
         .task-progress-bar { background-color: var(--input-bg); border-radius: 8px; overflow: hidden; height: 10px; margin-top: 5px; }
         .task-progress { background-color: var(--primary-color); height: 100%; transition: width 0.5s ease; }
@@ -143,6 +128,138 @@
         #image-preview-modal img { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 8px; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
         #image-preview-modal .close-btn { position: absolute; top: 20px; right: 30px; font-size: 3em; color: white; cursor: pointer; text-shadow: 0 0 10px black; }
         .admin-tab-content {display: none;} .admin-tab-content.active {display: block;}
+
+        #live-support-button {
+            width: 60px; height: 60px; border-radius: 12px;
+            font-size: 28px; position: relative;
+        }
+        #live-support-button.offline {
+            cursor: not-allowed; filter: grayscale(80%);
+        }
+        #live-support-button .status-indicator {
+            position: absolute; top: 6px; right: 6px;
+            width: 12px; height: 12px; border-radius: 50%;
+            border: 2px solid var(--surface-color);
+            background-color: var(--danger-color);
+            transition: background-color 0.3s ease;
+        }
+        #live-support-button.online .status-indicator {
+            background-color: var(--success-color);
+        }
+
+        #live-support-widget {
+            position: fixed; z-index: 1002;
+            bottom: 90px; right: 20px;
+            width: 350px; height: 500px;
+            background: var(--surface-color); backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--container-shadow);
+            display: none; flex-direction: column; animation: fadeIn 0.3s;
+        }
+        .support-widget-header {
+            padding: 15px; border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .support-widget-header h3 { margin: 0; font-size: 1.2em; transition: color 0.3s ease; }
+        .support-widget-header button {
+            background: none; border: none; color: var(--text-secondary);
+            font-size: 1.1em; cursor: pointer; transition: color 0.2s ease;
+        }
+        .support-widget-header button:hover { color: var(--text-primary); }
+
+        #live-support-start-view {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; flex-grow: 1; padding: 20px;
+        }
+        #live-support-start-view h2 { margin-top: 0; color: var(--primary-color); }
+        #live-support-start-view p { color: var(--text-secondary); max-width: 250px; margin-bottom: 30px; }
+        #live-support-chat-view {
+            display: none; flex-direction: column; flex-grow: 1; height: 100%;
+        }
+
+        .support-messages { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .support-message { display: flex; max-width: 85%; align-items: flex-end; gap: 10px; }
+        .support-message.user { align-self: flex-end; flex-direction: row-reverse; }
+        .support-message.staff { align-self: flex-start; }
+        .support-message.system { align-self: center; max-width: 100%; color: var(--text-secondary); font-size: 0.9em; }
+        .support-message .pfp { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; object-fit: cover; }
+        .message-content {
+            padding: 10px 14px; border-radius: 12px;
+            word-wrap: break-word; animation: fadeIn 0.4s;
+        }
+        .user .message-content { background: var(--primary-color); color: var(--background-start); border-bottom-right-radius: 2px; }
+        .staff .message-content { background: var(--input-bg); border-bottom-left-radius: 2px; }
+        .staff .message-content .nickname { font-weight: bold; font-size: 0.9em; color: var(--primary-color); margin-bottom: 4px; }
+        .message-timestamp { font-size: 0.75em; color: var(--text-secondary); margin-top: 5px; text-align: right; }
+        .staff .message-timestamp { text-align: left; }
+        
+        /* EDIT: Typing indicator */
+        .typing-indicator { display: none; align-self: flex-start; margin: 0 15px 10px; }
+        .typing-indicator span { height: 8px; width: 8px; float: left; margin: 0 1px; background-color: var(--text-secondary); display: block; border-radius: 50%; opacity: 0.4; animation: bob 1.5s infinite; }
+        .typing-indicator span:nth-of-type(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-of-type(3) { animation-delay: 0.4s; }
+        @keyframes bob { 50% { opacity: 1; transform: translateY(-3px); } }
+
+        .support-input-area {
+            display: flex; padding: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+        .support-input-area input { flex-grow: 1; margin-right: 10px; }
+        .support-input-area button { width: auto; padding: 14px; }
+
+        #staff-tasks-page .staff-dashboard-nav {
+            display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 25px;
+        }
+        #staff-tasks-page .staff-nav-btn {
+            padding: 10px 20px; background: none; border: none; color: var(--text-secondary); cursor: pointer;
+            font-size: 1em; font-weight: 600;
+        }
+        #staff-tasks-page .staff-nav-btn.active {
+            color: var(--primary-color); border-bottom: 2px solid var(--primary-color);
+        }
+        .staff-dashboard-content { display: none; }
+        .staff-dashboard-content.active { display: block; }
+        #staff-pfp-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color); margin-top: 10px; }
+
+        .log-dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; }
+        .stat-card h4 { margin: 0 0 10px 0; color: var(--text-secondary); font-size: 1em; }
+        .stat-card .stat-number { font-size: 2.5em; font-weight: 700; color: var(--primary-color); }
+        .log-type-breakdown ul { list-style: none; padding: 0; margin: 0; }
+        .log-type-breakdown li { display: flex; justify-content: space-between; margin-bottom: 8px; }
+
+        #logs-container { display: flex; flex-direction: column; gap: 10px; }
+        .log-entry { border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .log-entry summary {
+            display: flex; align-items: center; gap: 15px; padding: 15px;
+            cursor: pointer; background: rgba(0,0,0,0.2);
+            transition: background-color 0.2s ease;
+        }
+        .log-entry summary:hover { background: rgba(0,0,0,0.4); }
+        .log-entry summary::-webkit-details-marker { display: none; }
+        .log-icon { width: 24px; height: 24px; flex-shrink: 0; }
+        .log-title { font-weight: 600; flex-grow: 1; }
+        .log-timestamp { font-size: 0.9em; color: var(--text-secondary); }
+        .log-details { padding: 20px; background: var(--input-bg); border-top: 1px solid var(--border-color); }
+        .log-details p { margin: 0; white-space: pre-wrap; word-break: break-word; }
+        
+        /* EDIT: Styles for new Application Status page */
+        .status-card {
+            display: flex; gap: 20px; align-items: center;
+            border-left: 5px solid; padding: 20px;
+            margin-bottom: 15px; background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        .status-card.accepted { border-color: var(--success-color); }
+        .status-card.rejected { border-color: var(--danger-color); }
+        .status-card.waiting { border-color: var(--waiting-color); }
+        .status-card .icon { font-size: 2em; }
+        .status-card.accepted .icon { color: var(--success-color); }
+        .status-card.rejected .icon { color: var(--danger-color); }
+        .status-card.waiting .icon { color: var(--waiting-color); }
+        .status-card-content h3 { margin: 0 0 5px 0; }
+        .status-card-content p { margin: 0; color: var(--text-secondary); }
     </style>
 </head>
 <body>
@@ -158,6 +275,12 @@
         <symbol id="icon-settings" viewBox="0 0 24 24"><path fill="currentColor" d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17-.59 1.69.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></symbol>
         <symbol id="icon-logs" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2h-2v10h2V2zm4.25 2.75-.88.88C17.41 6.66 18 8.23 18 10c0 3.31-2.69 6-6 6s-6-2.69-6-6c0-1.77.59-3.34 1.62-4.63l-.88-.88C4.7 6.13 4 8.21 4 10c0 4.42 3.58 8 8 8s8-3.58 8-8c0-1.79-.7-3.87-1.75-5.25z"></path></symbol>
         <symbol id="icon-staff" viewBox="0 0 24 24"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></symbol>
+        <symbol id="icon-support-chat" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></symbol>
+        <symbol id="icon-log-info" viewBox="0 0 24 24"><path fill="currentColor" d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"></path></symbol>
+        <symbol id="icon-log-delete" viewBox="0 0 24 24"><path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"></path></symbol>
+        <symbol id="icon-log-login" viewBox="0 0 24 24"><path fill="currentColor" d="M10,17.25V14H3V10H10V6.75L15.25,12L10,17.25M8,2H17A2,2 0 0,1 19,4V20A2,2 0 0,1 17,22H8A2,2 0 0,1 6,20V4A2,2 0 0,1 8,2Z"></path></symbol>
+        <symbol id="icon-log-task" viewBox="0 0 24 24"><path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M13.5,15.5V20H11.5V15.5H9V13.5H11.5V9H13.5V13.5H16V15.5H13.5M13,9V3.5L18.5,9H13Z"></path></symbol>
+        <symbol id="icon-log-user" viewBox="0 0 24 24"><path fill="currentColor" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"></path></symbol>
       </defs>
     </svg>
 
@@ -166,10 +289,14 @@
     
     <div class="fixed-buttons-container top-right">
         <div class="fixed-btn" onclick="showPage('login-page')" title="Admin Login"><svg fill="currentColor" viewBox="0 0 20 20" width="24"><path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 12a1 1 0 100-2 1 1 0 000 2z"></path></svg></div>
-        <div class="fixed-btn" onclick="showPage('staff-login-page')" title="Staff Tasks"><svg width="24" height="24"><use xlink:href="#icon-staff"></use></svg></div>
+        <div class="fixed-btn" onclick="showPage('staff-login-page')" title="Staff Dashboard"><svg width="24" height="24"><use xlink:href="#icon-staff"></use></svg></div>
     </div>
     <div class="fixed-buttons-container bottom-right">
         <a href="https://discord.gg/42AjuqEDZs" target="_blank" class="fixed-btn" title="Join our Discord"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.36981C18.699 3.50425 16.961 2.85318 15.121 2.42725C15.033 2.65653 14.921 2.91207 14.823 3.14999C13.069 2.82563 11.233 2.82563 9.479 3.14999C9.381 2.91207 9.269 2.65653 9.181 2.42725C7.341 2.85318 5.603 3.50425 3.985 4.36981C0.465 8.42385 -0.444 12.3526 0.15 16.208C1.974 17.6892 4.029 18.6669 6.22 19.2739C6.444 18.9863 6.645 18.6872 6.822 18.3765C6.262 18.1472 5.726 17.8817 5.228 17.5855C5.166 17.5492 5.11 17.4918 5.068 17.4208C5.011 17.2016 4.978 16.9746 4.978 16.7453C4.978 16.7027 4.981 16.6602 4.981 16.6176C7.942 18.2398 11.333 18.7342 14.659 17.9933C15.229 18.7852 16.039 19.4632 17.065 19.9723C17.213 20.0433 17.369 20.0961 17.532 20.1347C19.721 19.2981 21.782 17.9701 23.486 16.208C24.516 11.9332 23.543 7.89218 20.317 4.36981ZM8.02 13.6396C7.031 13.6396 6.22 12.8179 6.22 11.8183C6.22 10.8187 7.017 10 8.02 10C9.023 10 9.82 10.8187 9.82 11.8183C9.82 12.8179 9.023 13.6396 8.02 13.6396ZM16.22 13.6396C15.231 13.6396 14.42 12.8179 14.42 11.8183C14.42 10.8187 15.217 10 16.22 10C17.223 10 18.02 10.8187 18.02 11.8183C18.02 12.8179 17.223 13.6396 16.22 13.6396Z"></path></svg></a>
+        <button id="live-support-button" class="fixed-btn" title="Live Support">
+            <div class="status-indicator"></div>
+            <svg width="28" height="28"><use xlink:href="#icon-support-chat"></use></svg>
+        </button>
     </div>
     <div class="container">
         <div id="selection-page" class="page-section active">
@@ -177,18 +304,25 @@
             <div id="application-status-header"></div>
             <p class="subtitle"></p>
             <div class="selection-grid"></div>
-            <button class="btn btn-secondary" onclick="showPage('status-check-page')" style="margin-top: 20px; width:100%;">Check Application Status</button>
+            <!-- EDIT: Removed Check Status button from homepage -->
+            <button class="btn btn-secondary" onclick="showPage('status-check-page')" style="margin-top: 20px; width:100%;">My Applications</button>
         </div>
         <div id="login-page" class="page-section">
             <div class="page-header"><h1>KEY</h1><button class="btn btn-secondary" onclick="showSelection()">Back</button></div>
             <div style="margin-bottom: 1rem;"><input type="password" id="dev-key" placeholder="Enter Developer Key" autocomplete="off" onkeydown="if(event.key==='Enter')handleDevLogin()"></div>
             <button class="btn btn-primary" onclick="handleDevLogin()">Enter</button>
         </div>
+        <!-- EDIT: New Application Status Page -->
          <div id="status-check-page" class="page-section">
-            <div class="page-header"><h1>Check Status</h1><button class="btn btn-secondary" onclick="showSelection()">Back</button></div>
-            <div style="margin-bottom: 1rem;"><input type="text" id="status-check-discord-id" placeholder="Enter Your Discord ID (e.g., user#0001)"></div>
-            <button class="btn btn-primary" onclick="checkUserStatus()">Check My Applications</button>
-            <div id="status-results" style="margin-top: 20px;"></div>
+            <div class="page-header"><h1>My Applications</h1><button class="btn btn-secondary" onclick="showSelection()">Back</button></div>
+            <div id="status-check-input-view">
+                <p>Enter your Discord ID (e.g., user#0001) to view the status of all your applications.</p>
+                <div style="margin-bottom: 1rem;"><input type="text" id="status-check-discord-id" placeholder="Enter Your Discord ID"></div>
+                <button class="btn btn-primary" onclick="checkUserStatus()">View My Applications</button>
+            </div>
+            <div id="status-results-view" style="display:none;">
+                <div id="status-results-container" style="margin-top: 20px;"></div>
+            </div>
         </div>
         <div id="admin-panel" class="page-section">
             <div class="page-header"><h1>Admin Panel</h1><button class="btn btn-secondary" onclick="adminLogout()">Logout</button></div>
@@ -206,6 +340,7 @@
                     </div>
                      <div style="margin-top:20px;">
                         <h3>Site</h3>
+                        <button class="admin-nav-btn" data-target="admin-live-support"><svg><use xlink:href="#icon-support-chat"></use></svg>Live Support</button>
                         <button class="admin-nav-btn" data-target="admin-theme"><svg><use xlink:href="#icon-settings"></use></svg>Theme & Settings</button>
                         <button class="admin-nav-btn" data-target="admin-logs"><svg><use xlink:href="#icon-logs"></use></svg>Logs</button>
                     </div>
@@ -214,6 +349,23 @@
                     <div id="admin-submissions" class="admin-section">
                          <h2>Submissions</h2>
                          <div id="submissions-container"></div>
+                    </div>
+                    <div id="admin-live-support" class="admin-section">
+                        <h2>Live Support Control</h2>
+                         <div style="margin-bottom: 1.5rem;">
+                            <label>Live Support Status</label>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="color:var(--text-secondary)">Offline</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="live-support-status-toggle" onchange="toggleLiveSupportStatus(this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                                <span style="color:var(--text-primary)">Online</span>
+                            </div>
+                        </div>
+                        <div id="admin-support-chat-area">
+                            <p>Live support is currently offline.</p>
+                        </div>
                     </div>
                     <div id="admin-staff-management" class="admin-section">
                         <h2>Staff Management</h2>
@@ -227,7 +379,13 @@
                         <div id="staff-tasks" class="admin-tab-content"></div>
                     </div>
                      <div id="admin-logs" class="admin-section">
-                         <h2>Activity Logs</h2>
+                         <h2>Logs Dashboard</h2>
+                         <div id="log-dashboard-stats" class="log-dashboard-grid"></div>
+                         <hr style="border-color:var(--border-color); margin: 20px 0;">
+                         <h3>Recent Activity</h3>
+                         <div style="margin-bottom: 20px;">
+                            <input type="text" id="log-filter-input" placeholder="Search recent activity..." oninput="filterLogs(this.value)">
+                         </div>
                          <div id="logs-container"><p>Loading logs...</p></div>
                     </div>
                     <div id="admin-webhooks" class="admin-section">
@@ -274,11 +432,35 @@
         <div id="form-container" class="page-section"></div>
         <div id="staff-login-page" class="page-section">
             <div class="page-header"><h1>Staff Login</h1><button class="btn btn-secondary" onclick="showSelection()">Back</button></div>
-            <p>Enter your assigned staff name/ID to view your tasks.</p>
-            <div style="margin-bottom: 1rem;"><input type="text" id="staff-id-input" placeholder="Enter Your Staff ID"></div>
-            <button class="btn btn-primary" onclick="handleStaffLogin()">View My Tasks</button>
+            <!-- EDIT: Clarified login labels -->
+            <p>Enter your assigned Staff ID and Key to access your dashboard.</p>
+            <div style="margin-bottom: 1rem;"><label for="staff-id-input">Staff ID</label><input type="text" id="staff-id-input" placeholder="Your unique staff ID"></div>
+            <div style="margin-bottom: 1rem;"><label for="staff-key-input">Key</label><input type="password" id="staff-key-input" placeholder="Your private key"></div>
+            <button class="btn btn-primary" onclick="handleStaffLogin()">Login</button>
         </div>
         <div id="staff-tasks-page" class="page-section">
+        </div>
+    </div>
+
+    <div id="live-support-widget">
+        <div id="live-support-start-view">
+            <div class="logo-container" style="margin-bottom: 10px;"><img src="" alt="Logo" style="max-width: 100px;"></div>
+            <h2>Welcome to Support</h2>
+            <p>Have a question or need help? Start a chat with our team.</p>
+            <button class="btn btn-primary" onclick="initiateUserChat()">Start New Chat</button>
+        </div>
+        <div id="live-support-chat-view">
+            <div class="support-widget-header">
+                <h3 id="support-widget-title">Live Support</h3>
+                <button onclick="userEndSupportSession()">End Chat</button>
+            </div>
+            <div class="support-messages" id="support-messages-container"></div>
+            <!-- EDIT: Added typing indicator element -->
+            <div class="typing-indicator" id="typing-indicator"><span></span><span></span><span></span></div>
+            <div class="support-input-area">
+                <input type="text" id="support-message-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendSupportMessage(); }">
+                <button class="btn btn-primary" onclick="sendSupportMessage()">Send</button>
+            </div>
         </div>
     </div>
     
@@ -296,11 +478,15 @@
     const DELETE_KEY = "Deletedgold98122";
     const SUBMISSION_COOLDOWN_HOURS = 72;
     const MAX_UPLOAD_SIZE_MB = 2;
+    const MAX_PFP_SIZE_MB = 1;
     // ===================================================================================
 
     let siteSettings;
     let countdownInterval;
     let isSaving = false;
+    let supportPollingInterval;
+    // EDIT: Variables for typing indicator
+    let typingTimeout;
 
     const defaultSettings = {
         theme: {
@@ -341,6 +527,11 @@
             users: {},
             roles: {},
             tasks: {}
+        },
+        liveSupport: {
+            status: "offline",
+            // EDIT: Added typing status to session object
+            activeSession: null // { userId, status, staffId, messages, userTyping, staffTyping }
         }
     };
 
@@ -352,6 +543,7 @@
         root.style.setProperty('--background-start', theme.backgroundStart);
         root.style.setProperty('--background-end', theme.backgroundEnd);
         document.querySelector('.logo-container img').src = theme.logoUrl;
+        document.querySelector('#live-support-start-view .logo-container img').src = theme.logoUrl;
         document.querySelector('#selection-page .subtitle').textContent = theme.subtitle;
     }
 
@@ -415,7 +607,6 @@
                 embeds: [{ title, description, color: webhookColor, timestamp: new Date().toISOString() }]
             });
         }
-        // No need to save here, will be saved by the calling function
     }
 
     async function saveAllSettings(saveButton) {
@@ -423,7 +614,7 @@
         if (success) {
             alert('All settings saved and synced online!');
             await adminLog("🛠️ Site Settings Updated", "An admin has updated the site configuration.", 'info');
-            await saveDataToStorage(null); // Save the log itself
+            await saveDataToStorage(null); 
             await loadDataFromStorage(true);
             setupHomepage();
             if (document.getElementById('admin-panel').classList.contains('active')) setupAdminPanel();
@@ -438,7 +629,13 @@
         container.style.opacity = '0.5'; container.style.pointerEvents = 'none';
         await loadDataFromStorage();
         if (!siteSettings.staffSystem) siteSettings.staffSystem = JSON.parse(JSON.stringify(defaultSettings.staffSystem));
+        if (!siteSettings.liveSupport) siteSettings.liveSupport = JSON.parse(JSON.stringify(defaultSettings.liveSupport));
         setupHomepage();
+        setupLiveSupportButton();
+
+        // EDIT: Add keyup listeners for typing indicators
+        document.getElementById('support-message-input').addEventListener('keyup', () => handleTyping('user'));
+        
         container.style.opacity = '1'; container.style.pointerEvents = 'auto';
     });
     
@@ -459,10 +656,12 @@
         const page = document.getElementById(pageId);
         if (page) page.classList.add('active');
 
-        if (pageId === 'staff-login-page' && sessionStorage.getItem('currentStaffId')) {
-            showPage('staff-tasks-page');
-        } else if (pageId === 'staff-tasks-page') {
-            renderStaffTasksPage();
+        if (pageId === 'staff-tasks-page') {
+             if (sessionStorage.getItem('currentStaffId')) {
+                renderStaffTasksPage();
+             } else {
+                showPage('staff-login-page');
+             }
         }
     }
     
@@ -578,7 +777,7 @@
                     }
                 }, 1000);
             } else {
-                formHTML += `<p>A decision has been made on your recent application. You may check the status of all your applications using the button on the homepage.</p>`;
+                formHTML += `<p>A decision has been made on your recent application.</p>`;
             }
             formHTML += `</div>`;
         } else {
@@ -595,6 +794,46 @@
              document.getElementById(`app-form-${formType}`).addEventListener('submit', (e) => { e.preventDefault(); submitApplication(formType); });
         }
     }
+    
+    // EDIT: New Application Status functions
+    function checkUserStatus() {
+        const discordId = document.getElementById('status-check-discord-id').value.trim();
+        if (!discordId) {
+            alert('Please enter your Discord ID.');
+            return;
+        }
+
+        const userSubmissions = (siteSettings.submissions[discordId] || []).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        const resultsContainer = document.getElementById('status-results-container');
+        
+        if (userSubmissions.length === 0) {
+            resultsContainer.innerHTML = '<p>No applications found for that Discord ID.</p>';
+        } else {
+            resultsContainer.innerHTML = userSubmissions.map(sub => {
+                const appConfig = siteSettings.appConfigs[sub.appType];
+                let icon;
+                switch(sub.status) {
+                    case 'accepted': icon = '✔️'; break;
+                    case 'rejected': icon = '❌'; break;
+                    default: icon = '🕒';
+                }
+                return `
+                    <div class="status-card ${sub.status}">
+                        <div class="icon">${icon}</div>
+                        <div class="status-card-content">
+                            <h3>${appConfig.title} Application</h3>
+                            <p>Status: <strong>${sub.status.charAt(0).toUpperCase() + sub.status.slice(1)}</strong></p>
+                            <p>Submitted: ${new Date(sub.timestamp).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        document.getElementById('status-check-input-view').style.display = 'none';
+        document.getElementById('status-results-view').style.display = 'block';
+    }
+
 
     function setupAdminPanel() {
         document.querySelectorAll('.admin-nav-btn').forEach(btn => {
@@ -603,6 +842,12 @@
                 const currentButton = e.currentTarget;
                 currentButton.classList.add('active');
                 document.getElementById(currentButton.dataset.target).classList.add('active');
+                
+                if (currentButton.dataset.target === 'admin-live-support') {
+                    startAdminSupportPolling();
+                } else {
+                    stopAdminSupportPolling();
+                }
             });
         });
 
@@ -612,6 +857,7 @@
         setupApplicationEditorList();
         renderThemeEditor();
         renderStaffManagementAdmin();
+        renderAdminLiveSupportView();
 
         document.querySelector('.admin-nav-btn[data-target="admin-submissions"]').click();
     }
@@ -670,15 +916,85 @@
     }
     
     function renderLogs() {
-        const container = document.getElementById('logs-container');
-        if (!siteSettings.logs || siteSettings.logs.length === 0) { container.innerHTML = '<p>No log entries found.</p>'; return; }
-        container.innerHTML = siteSettings.logs.map(log => `
-            <div class="log-item log-type-${log.type}">
-                <p><strong>${log.title}</strong></p>
-                <p>${log.description.replace(/\n/g, '<br>')}</p>
-                <p class="timestamp">${new Date(log.timestamp).toLocaleString()}</p>
-            </div>`).join('');
+        const statsContainer = document.getElementById('log-dashboard-stats');
+        const listContainer = document.getElementById('logs-container');
+        const logs = siteSettings.logs || [];
+        
+        const now = new Date();
+        const twentyFourHoursAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        const totalLogs = logs.length;
+        const loginsToday = logs.filter(l => l.type === 'login' && new Date(l.timestamp) >= todayStart).length;
+        const newSubmissions24h = logs.filter(l => l.type === 'submission' && new Date(l.timestamp) >= twentyFourHoursAgo).length;
+
+        const logCounts = logs.reduce((acc, log) => {
+            acc[log.type] = (acc[log.type] || 0) + 1;
+            return acc;
+        }, {});
+
+        statsContainer.innerHTML = `
+            <div class="stat-card">
+                <h4>Total Logs</h4>
+                <div class="stat-number">${totalLogs}</div>
+            </div>
+            <div class="stat-card">
+                <h4>Admin Logins (Today)</h4>
+                <div class="stat-number">${loginsToday}</div>
+            </div>
+            <div class="stat-card">
+                <h4>New Submissions (24h)</h4>
+                <div class="stat-number">${newSubmissions24h}</div>
+            </div>
+            <div class="stat-card log-type-breakdown">
+                <h4>Log Type Breakdown</h4>
+                <ul>
+                    ${Object.entries(logCounts).map(([type, count]) => `<li><span>${type.replace(/_/g, ' ')}</span> <strong>${count}</strong></li>`).join('') || '<li>No logs yet</li>'}
+                </ul>
+            </div>
+        `;
+
+        if (logs.length === 0) { 
+            listContainer.innerHTML = '<p>No log entries found.</p>'; return; 
+        }
+
+        const logTypeDetails = {
+            login: { icon: 'icon-log-login', color: 'var(--success-color)' },
+            delete: { icon: 'icon-log-delete', color: 'var(--danger-color)' },
+            status_change: { icon: 'icon-waiting', color: 'var(--waiting-color)' },
+            task_completion: { icon: 'icon-log-task', color: 'var(--staff-color)' },
+            user_management: { icon: 'icon-log-user', color: 'var(--primary-color)' },
+            info: { icon: 'icon-log-info', color: 'var(--info-color)' }
+        };
+
+        listContainer.innerHTML = logs.map(log => {
+            const details = logTypeDetails[log.type] || logTypeDetails.info;
+            return `
+            <details class="log-entry" data-log-text="${(log.title + ' ' + log.description).toLowerCase()}">
+                <summary>
+                    <svg class="log-icon" style="color: ${details.color};"><use xlink:href="#${details.icon}"></use></svg>
+                    <span class="log-title">${log.title}</span>
+                    <span class="log-timestamp">${new Date(log.timestamp).toLocaleString()}</span>
+                </summary>
+                <div class="log-details">
+                    <p>${log.description.replace(/\n/g, '<br>')}</p>
+                </div>
+            </details>`;
+        }).join('');
     }
+
+    function filterLogs(query) {
+        const lowerQuery = query.toLowerCase();
+        document.querySelectorAll('#logs-container .log-entry').forEach(entry => {
+            const text = entry.dataset.logText;
+            if (text.includes(lowerQuery)) {
+                entry.style.display = 'block';
+            } else {
+                entry.style.display = 'none';
+            }
+        });
+    }
+
     
     function renderThemeEditor() {
         const theme = siteSettings.theme;
@@ -705,52 +1021,600 @@
     }
 
     // ===================================================================================
-    // STAFF SYSTEM - FRONTEND
+    // LIVE SUPPORT CHAT
     // ===================================================================================
+
+    // EDIT: New function to generate a cool, unique SVG avatar from a string (like a userId)
+    function generateUserAvatar(id) {
+        const hash = id.split('').reduce((acc, char) => char.charCodeAt(0) + ((acc << 5) - acc), 0);
+        const colors = ['#89b4fa', '#f38ba8', '#a6e3a1', '#fab387', '#f5e0dc', '#cba6f7', '#74c7ec'];
+        const color = colors[Math.abs(hash) % colors.length];
+        const svg = `<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" fill="${color}" />
+            <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" font-family="Poppins, sans-serif" font-size="20" fill="#1e1e2e">${id.charAt(5).toUpperCase()}</text>
+        </svg>`;
+        return `data:image/svg+xml;base64,${btoa(svg)}`;
+    }
+
+    function setupLiveSupportButton() {
+        const button = document.getElementById('live-support-button');
+        const isOnline = siteSettings.liveSupport.status === 'online';
+        
+        button.classList.toggle('online', isOnline);
+        button.classList.toggle('offline', !isOnline);
+        button.disabled = !isOnline;
+
+        button.onclick = () => {
+            if (siteSettings.liveSupport.status === 'online') {
+                toggleSupportWidget();
+            }
+        };
+    }
+
+    function toggleSupportWidget(forceShow) {
+        const widget = document.getElementById('live-support-widget');
+        const isVisible = widget.style.display === 'flex';
+        const show = forceShow !== undefined ? forceShow : !isVisible;
+
+        if (show) {
+            widget.style.display = 'flex';
+            const userId = sessionStorage.getItem('liveSupportUserId');
+            if (!siteSettings.liveSupport.activeSession || siteSettings.liveSupport.activeSession.userId !== userId) {
+                resetSupportWidgetView();
+            } else {
+                initiateUserChat();
+            }
+        } else {
+            widget.style.display = 'none';
+            stopUserSupportPolling();
+        }
+    }
+
+    function initiateUserChat() {
+        document.getElementById('live-support-start-view').style.display = 'none';
+        document.getElementById('live-support-chat-view').style.display = 'flex';
+        startUserSupportSession();
+    }
+
+    function resetSupportWidgetView() {
+        document.getElementById('live-support-chat-view').style.display = 'none';
+        document.getElementById('live-support-start-view').style.display = 'flex';
+        document.getElementById('support-widget-title').textContent = "Live Support";
+    }
     
-    function handleStaffLogin() {
-        const staffIdInput = document.getElementById('staff-id-input').value.trim().toLowerCase().replace(/\s+/g, '-');
-        if (!staffIdInput) {
-            alert("Please enter your Staff ID.");
+    async function startUserSupportSession() {
+        let userId = sessionStorage.getItem('liveSupportUserId');
+        if (!userId) {
+            userId = 'user-' + generateUUID();
+            sessionStorage.setItem('liveSupportUserId', userId);
+        }
+
+        if (!siteSettings.liveSupport.activeSession) {
+            siteSettings.liveSupport.activeSession = {
+                userId: userId, status: 'pending', staffId: null,
+                messages: [{ sender: 'system', text: 'You have started a new support session. A staff member will be with you shortly.', timestamp: new Date().toISOString() }],
+                userTyping: false, staffTyping: false
+            };
+            await saveDataToStorage(null);
+        }
+        
+        pollUserSupport(); 
+        if (!supportPollingInterval) {
+            supportPollingInterval = setInterval(pollUserSupport, 3000); // Poll slightly faster
+        }
+    }
+
+    function stopUserSupportPolling() {
+        clearInterval(supportPollingInterval);
+        supportPollingInterval = null;
+    }
+    
+    async function pollUserSupport() {
+        try {
+            const response = await fetch(JSONBIN_CONFIG.BIN_URL(), { headers: { 'X-Master-Key': JSONBIN_CONFIG.API_KEY, 'X-Bin-Meta': 'false' }});
+            if (!response.ok) return;
+            const liveData = await response.json();
+            siteSettings.liveSupport = liveData.liveSupport;
+            renderSupportMessages();
+        } catch (error) { console.error("Polling failed:", error); }
+    }
+
+    function renderSupportMessages() {
+        const container = document.getElementById('support-messages-container');
+        const session = siteSettings.liveSupport.activeSession;
+        const userId = sessionStorage.getItem('liveSupportUserId');
+        const defaultPfp = 'https://i.imgur.com/gLaLga1.png';
+        const chatInput = document.getElementById('support-message-input');
+
+        if (!session || session.userId !== userId) {
+            if (chatInput.disabled === false) { // Only update if not already set
+                container.innerHTML = `<div class="support-message system">The support session has ended. <div class="message-timestamp">${new Date().toLocaleTimeString()}</div></div>`;
+                chatInput.disabled = true;
+                document.getElementById('support-widget-title').textContent = "Live Support";
+                stopUserSupportPolling();
+            }
             return;
         }
 
-        if (siteSettings.staffSystem.users[staffIdInput]) {
-            sessionStorage.setItem('currentStaffId', staffIdInput);
-            showPage('staff-tasks-page');
-        } else {
-            alert("Invalid Staff ID. Please check the ID and try again.");
+        chatInput.disabled = false;
+        
+        const staffUser = session.staffId ? siteSettings.staffSystem.users[session.staffId] : null;
+        const staffNickname = staffUser?.nickname || 'Staff';
+        const staffPfp = staffUser?.pfpUrl || defaultPfp;
+        const userPfp = generateUserAvatar(session.userId);
+
+        if(staffUser) {
+            document.getElementById('support-widget-title').textContent = `Chat with ${staffNickname}`;
         }
+
+        let messagesHTML = '';
+        session.messages.forEach(msg => {
+            const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            if (msg.sender === 'user') {
+                 messagesHTML += `<div class="support-message user">
+                    <img src="${userPfp}" class="pfp" alt="pfp">
+                    <div class="message-content">${msg.text}<div class="message-timestamp">${time}</div></div>
+                </div>`;
+            } else if (msg.sender === 'staff') {
+                messagesHTML += `
+                    <div class="support-message staff">
+                        <img src="${staffPfp}" class="pfp" alt="pfp" onerror="this.src='${defaultPfp}'">
+                        <div class="message-content">
+                            <div class="nickname">${staffNickname}</div>
+                            ${msg.text}
+                            <div class="message-timestamp">${time}</div>
+                        </div>
+                    </div>`;
+            } else {
+                messagesHTML += `<div class="support-message system">${msg.text}<div class="message-timestamp">${time}</div></div>`;
+            }
+        });
+
+        const currentMessageCount = container.children.length;
+        if (session.messages.length !== currentMessageCount) {
+            const isScrolledToBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 1;
+            container.innerHTML = messagesHTML;
+            if (isScrolledToBottom) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+        
+        // Handle typing indicator
+        const indicator = document.getElementById('typing-indicator');
+        if(session.staffTyping) {
+            indicator.style.display = 'flex';
+        } else {
+            indicator.style.display = 'none';
+        }
+    }
+
+    async function sendSupportMessage() {
+        const input = document.getElementById('support-message-input');
+        const messageText = input.value.trim();
+        if (!messageText || input.disabled) return;
+        
+        const userId = sessionStorage.getItem('liveSupportUserId');
+        if (!siteSettings.liveSupport.activeSession || siteSettings.liveSupport.activeSession.userId !== userId) {
+            alert("Session has ended."); return;
+        }
+        
+        const newMessage = { sender: 'user', text: messageText, timestamp: new Date().toISOString() };
+        siteSettings.liveSupport.activeSession.messages.push(newMessage);
+        siteSettings.liveSupport.activeSession.userTyping = false; // Stop typing on send
+        renderSupportMessages();
+        input.value = '';
+
+        await saveDataToStorage(null);
+    }
+    
+    async function userEndSupportSession() {
+        if(confirm("Are you sure you want to end this chat session?")) {
+            if (siteSettings.liveSupport.activeSession) {
+                 siteSettings.liveSupport.activeSession = null; // Simply end it
+            }
+            await saveDataToStorage(null);
+            toggleSupportWidget(false);
+            resetSupportWidgetView();
+        }
+    }
+    
+    // EDIT: New function to handle typing status
+    async function handleTyping(who) {
+        const session = siteSettings.liveSupport.activeSession;
+        if (!session) return;
+        
+        const typingKey = `${who}Typing`;
+
+        if (!session[typingKey]) {
+            session[typingKey] = true;
+            await saveDataToStorage(null);
+        }
+
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(async () => {
+            if(siteSettings.liveSupport.activeSession) {
+                siteSettings.liveSupport.activeSession[typingKey] = false;
+                await saveDataToStorage(null);
+            }
+        }, 2000);
+    }
+
+    function renderAdminLiveSupportView() {
+        const container = document.getElementById('admin-support-chat-area');
+        const toggle = document.getElementById('live-support-status-toggle');
+        const isOnline = siteSettings.liveSupport.status === 'online';
+        toggle.checked = isOnline;
+
+        if (!isOnline) {
+            container.innerHTML = '<p>Live support is currently offline. Enable it above to see requests.</p>'; return;
+        }
+        
+        const session = siteSettings.liveSupport.activeSession;
+        if (!session) {
+            container.innerHTML = '<p>Waiting for a user to start a support request...</p>'; return;
+        }
+        
+        const staffUser = session.staffId ? siteSettings.staffSystem.users[session.staffId] : null;
+        const handledBy = staffUser ? (staffUser.nickname || staffUser.name) : 'Not yet accepted';
+
+        if (session.status === 'pending') {
+            container.innerHTML = `
+                <div class="admin-list-item">
+                    <h4>New Pending Request</h4>
+                    <p>User ID: ${session.userId}</p>
+                    <p>A user is waiting for support.</p>
+                </div>
+            `;
+        } else if (session.status === 'active') {
+            let messagesHTML = session.messages.map(msg => `<div><strong>${msg.sender}:</strong> ${msg.text}</div>`).join('');
+            container.innerHTML = `
+                <h4>Active Chat with ${session.userId}</h4>
+                <p><strong>Handled by:</strong> ${handledBy}</p>
+                <div class="support-messages" id="admin-support-messages" style="height: 300px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 1rem; display:block; background: var(--input-bg); padding:10px;">
+                    ${messagesHTML}
+                </div>
+                <button class="btn-danger" style="margin-top: 1rem;" onclick="closeSupportSession()">Force Close Session</button>
+            `;
+            const adminMsgContainer = document.getElementById('admin-support-messages');
+            if (adminMsgContainer) adminMsgContainer.scrollTop = adminMsgContainer.scrollHeight;
+        }
+    }
+
+    async function toggleLiveSupportStatus(isOnline) {
+        const newStatus = isOnline ? 'online' : 'offline';
+        if (siteSettings.liveSupport.status === newStatus) return;
+
+        siteSettings.liveSupport.status = newStatus;
+        if (!isOnline) {
+            siteSettings.liveSupport.activeSession = null;
+        }
+        await adminLog('💬 Live Support Toggled', `Live support is now **${newStatus.toUpperCase()}**.`, 'info');
+        await saveDataToStorage(null);
+        setupLiveSupportButton();
+        renderAdminLiveSupportView();
+    }
+    
+    function startAdminSupportPolling() {
+        pollAdminSupport(); 
+        if (!supportPollingInterval) supportPollingInterval = setInterval(pollAdminSupport, 3000);
+    }
+    
+    function stopAdminSupportPolling() {
+        clearInterval(supportPollingInterval); supportPollingInterval = null;
+    }
+
+    async function pollAdminSupport() {
+         const response = await fetch(JSONBIN_CONFIG.BIN_URL(), {
+            headers: { 'X-Master-Key': JSONBIN_CONFIG.API_KEY, 'X-Bin-Meta': 'false' }
+        });
+        if (!response.ok) return;
+        const liveData = await response.json();
+        siteSettings.liveSupport = liveData.liveSupport;
+
+        renderAdminLiveSupportView();
+    }
+    
+    async function closeSupportSession() {
+        if (confirm("Are you sure you want to FORCE close this support session? The user and staff will be disconnected.")) {
+            await adminLog("💬 Chat Closed by Admin", `Admin force-closed chat with user ${siteSettings.liveSupport.activeSession.userId}`, 'delete');
+            siteSettings.liveSupport.activeSession = null;
+            await saveDataToStorage(null);
+            renderAdminLiveSupportView();
+        }
+    }
+
+    // ===================================================================================
+    // STAFF SYSTEM - FRONTEND
+    // ===================================================================================
+    
+    async function handleStaffLogin() {
+        const staffId = document.getElementById('staff-id-input').value.trim().toLowerCase().replace(/\s+/g, '-');
+        const staffKey = document.getElementById('staff-key-input').value;
+        if (!staffId) {
+            alert("Please enter your Staff ID."); return;
+        }
+
+        const user = siteSettings.staffSystem.users[staffId];
+        if (!user) {
+            alert("Invalid Staff ID."); return;
+        }
+        
+        if (user.key && user.key !== staffKey) {
+            alert("Incorrect Key."); return;
+        }
+        if (!user.key && staffKey) {
+            alert("This account does not have a key set. Leave the key field blank."); return;
+        }
+
+
+        sessionStorage.setItem('currentStaffId', staffId);
+        showPage('staff-tasks-page');
     }
 
     function renderStaffTasksPage() {
         const container = document.getElementById('staff-tasks-page');
         const staffId = sessionStorage.getItem('currentStaffId');
         if (!staffId || !siteSettings.staffSystem.users[staffId]) {
-            showPage('staff-login-page');
-            return;
+            showPage('staff-login-page'); return;
         }
-
         const user = siteSettings.staffSystem.users[staffId];
         const role = siteSettings.staffSystem.roles[user.roleId] || { name: 'No Role', color: '#fff' };
         
-        let html = `<div class="page-header">
-            <div>
-                <h1>${user.name}'s Tasks</h1>
-                <p style="margin-top:-10px; color:${role.color};" class="${role.shine ? 'shine' : ''}">Role: ${role.name}</p>
+        container.innerHTML = `
+            <div class="page-header">
+                <div>
+                    <h1>${user.nickname || user.name}'s Dashboard</h1>
+                    <p style="margin-top:-10px; color:${role.color};" class="${role.shine ? 'shine' : ''}">Role: ${role.name}</p>
+                </div>
+                <button class="btn btn-secondary" onclick="showSelection()">Logout</button>
             </div>
-            <button class="btn btn-secondary" onclick="showSelection()">Logout</button>
-        </div>`;
+            <div class="staff-dashboard-nav">
+                <button class="staff-nav-btn active" data-target="staff-content-tasks">Tasks</button>
+                <button class="staff-nav-btn" data-target="staff-content-support">Live Support</button>
+                <button class="staff-nav-btn" data-target="staff-content-profile">Profile</button>
+            </div>
+            <div id="staff-content-tasks" class="staff-dashboard-content active"></div>
+            <div id="staff-content-support" class="staff-dashboard-content"></div>
+            <div id="staff-content-profile" class="staff-dashboard-content"></div>
+        `;
         
+        container.querySelectorAll('.staff-nav-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                container.querySelectorAll('.staff-nav-btn, .staff-dashboard-content').forEach(el => el.classList.remove('active'));
+                const targetId = e.currentTarget.dataset.target;
+                e.currentTarget.classList.add('active');
+                document.getElementById(targetId).classList.add('active');
+
+                if (targetId === 'staff-content-support') startStaffSupportPolling();
+                else stopAdminSupportPolling();
+            });
+        });
+
+        renderStaffTasksContent(staffId);
+        renderStaffSupportContent(staffId);
+        renderStaffProfileContent(staffId);
+    }
+    
+    function renderStaffTasksContent(staffId) {
+        const container = document.getElementById('staff-content-tasks');
         const assignedTasks = Object.entries(siteSettings.staffSystem.tasks || {}).filter(([_, task]) => task.assignedTo.includes(staffId));
 
         if (assignedTasks.length === 0) {
-            html += `<p>You have no tasks assigned to you. Great job!</p>`;
+            container.innerHTML = `<p>You have no tasks assigned to you. Great job!</p>`;
         } else {
-            html += assignedTasks.map(([taskId, task]) => renderTaskItem(taskId, task, staffId)).join('');
+            container.innerHTML = assignedTasks.map(([taskId, task]) => renderTaskItem(taskId, task, staffId)).join('');
         }
-        container.innerHTML = html;
     }
+
+    function renderStaffProfileContent(staffId) {
+        const container = document.getElementById('staff-content-profile');
+        const user = siteSettings.staffSystem.users[staffId];
+        const defaultPfp = 'https://i.imgur.com/gLaLga1.png';
+
+        container.innerHTML = `
+            <h3>Profile & Account Settings</h3>
+            <div class="admin-list-item">
+                <div style="display:flex; gap: 20px; align-items:center; margin-bottom: 1rem;">
+                    <div>
+                        <label for="staff-pfp-upload">Profile Picture</label>
+                        <input type="file" id="staff-pfp-upload" accept="image/png, image/jpeg, image/gif" onchange="previewStaffPfp(event)">
+                        <small>Max ${MAX_PFP_SIZE_MB}MB. Recommended: Square Image.</small>
+                    </div>
+                    <img id="staff-pfp-preview" src="${user.pfpUrl || defaultPfp}" alt="PFP Preview" onerror="this.src='${defaultPfp}'">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="staff-nickname">Nickname (this will be shown in chat)</label>
+                    <input type="text" id="staff-nickname" value="${user.nickname || ''}">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="staff-email">Email</label>
+                    <input type="email" id="staff-email" value="${user.email || ''}">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="staff-key">New Key (leave blank to keep current)</label>
+                    <input type="password" id="staff-key" placeholder="Enter new key">
+                </div>
+                <button class="btn-primary" onclick="saveStaffProfile(this)">Save Profile</button>
+            </div>
+        `;
+    }
+
+    function previewStaffPfp(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const preview = document.getElementById('staff-pfp-preview');
+            preview.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    async function saveStaffProfile(btn) {
+        btn.disabled = true; btn.textContent = 'Saving...';
+        const staffId = sessionStorage.getItem('currentStaffId');
+        const user = siteSettings.staffSystem.users[staffId];
+
+        const newNickname = document.getElementById('staff-nickname').value;
+        const newEmail = document.getElementById('staff-email').value;
+        const newKey = document.getElementById('staff-key').value;
+        const pfpFile = document.getElementById('staff-pfp-upload').files[0];
+
+        let changes = [];
+        if ((user.nickname || '') !== newNickname) changes.push("Nickname");
+        if ((user.email || '') !== newEmail) changes.push("Email");
+        if (newKey) changes.push("Key");
+        if (pfpFile) changes.push("Profile Picture");
+        
+        user.nickname = newNickname;
+        user.email = newEmail;
+        if (newKey) user.key = newKey;
+
+        if (pfpFile) {
+            if (pfpFile.size > MAX_PFP_SIZE_MB * 1024 * 1024) {
+                alert(`Image is too large. Max size is ${MAX_PFP_SIZE_MB}MB.`);
+                btn.disabled = false; btn.textContent = 'Save Profile';
+                return;
+            }
+            try {
+                const base64String = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = error => reject(error);
+                    reader.readAsDataURL(pfpFile);
+                });
+                user.pfpUrl = base64String;
+            } catch (error) {
+                alert("Error reading image file. Please try another image.");
+                btn.disabled = false; btn.textContent = 'Save Profile';
+                return;
+            }
+        }
+        
+        if (changes.length > 0) {
+            await adminLog(`👤 Staff Profile Updated`, `**Staff:** ${user.name}\n**Changes:** ${changes.join(', ')}`, 'user_management');
+            const success = await saveDataToStorage(null);
+            if(success) {
+                alert('Your profile has been updated!');
+                document.getElementById('staff-key').value = '';
+            } else { alert('Error saving profile.'); }
+        } else { alert('No changes to save.'); }
+
+        btn.disabled = false; btn.textContent = 'Save Profile';
+    }
+
+    function renderStaffSupportContent() {
+        const container = document.getElementById('staff-content-support');
+        const staffId = sessionStorage.getItem('currentStaffId');
+        if (!staffId) return;
+
+        const isOnline = siteSettings.liveSupport.status === 'online';
+         if (!isOnline) {
+            container.innerHTML = '<p>Live support is currently offline.</p>'; return;
+        }
+        
+        const session = siteSettings.liveSupport.activeSession;
+        if (!session) {
+            container.innerHTML = '<p>Waiting for a user to start a support request...</p>'; return;
+        }
+
+        if (session.status === 'pending') {
+            container.innerHTML = `
+                <div class="admin-list-item">
+                    <h4>New Pending Request</h4>
+                    <p>A user (${session.userId}) is waiting for support.</p>
+                    <button class="btn-primary" onclick="staffAcceptSupportRequest()">Accept Chat</button>
+                </div>`;
+        } else if (session.staffId === staffId) {
+            let messagesHTML = session.messages.map(msg => {
+                const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const senderClass = msg.sender === 'staff' ? 'user' : 'staff';
+                const senderName = msg.sender === 'staff' ? 'You' : 'User';
+                const pfp = msg.sender === 'staff' ? (siteSettings.staffSystem.users[staffId].pfpUrl || 'https://i.imgur.com/gLaLga1.png') : generateUserAvatar(session.userId);
+                if(msg.sender === 'system') {
+                    return `<div class="support-message system">${msg.text}</div>`;
+                }
+                return `<div class="support-message ${senderClass}">
+                            <img src="${pfp}" class="pfp">
+                            <div class="message-content">
+                                <strong>${senderName}</strong><br>
+                                ${msg.text}
+                                <div class="message-timestamp">${time}</div>
+                            </div>
+                        </div>`;
+            }).join('');
+            
+            const typingIndicator = session.userTyping ? '<div style="color: var(--text-secondary); padding-left: 15px;">User is typing...</div>' : '';
+
+            container.innerHTML = `
+                <h4>Active Chat with ${session.userId}</h4>
+                <div class="support-messages" id="staff-support-messages" style="height: 300px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 1rem;">
+                    ${messagesHTML}
+                </div>
+                ${typingIndicator}
+                <div class="support-input-area" style="padding: 0;">
+                    <input type="text" id="staff-support-input" placeholder="Type a message..." onkeyup="handleTyping('staff')" onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); staffSendSupportMessage(); }">
+                    <button class="btn-primary" onclick="staffSendSupportMessage()">Send</button>
+                </div>
+                <button class="btn-danger" style="margin-top: 1rem;" onclick="staffCloseSupportSession()">Finish Chat</button>
+            `;
+            const staffMsgContainer = document.getElementById('staff-support-messages');
+            if (staffMsgContainer) staffMsgContainer.scrollTop = staffMsgContainer.scrollHeight;
+        } else {
+            const otherStaff = siteSettings.staffSystem.users[session.staffId];
+            container.innerHTML = `<p>A support session is already active, handled by ${otherStaff?.nickname || otherStaff?.name || 'another staff member'}.</p>`;
+        }
+    }
+
+    function startStaffSupportPolling() {
+        pollStaffSupport();
+        if (!supportPollingInterval) supportPollingInterval = setInterval(pollStaffSupport, 3000);
+    }
+
+     async function pollStaffSupport() {
+         try {
+            const response = await fetch(JSONBIN_CONFIG.BIN_URL(), { headers: { 'X-Master-Key': JSONBIN_CONFIG.API_KEY, 'X-Bin-Meta': 'false' }});
+            if (!response.ok) return;
+            const liveData = await response.json();
+            siteSettings.liveSupport = liveData.liveSupport;
+            renderStaffSupportContent();
+         } catch (e) { console.error("Staff poll failed", e); }
+    }
+
+    async function staffAcceptSupportRequest() {
+        const staffId = sessionStorage.getItem('currentStaffId');
+        if (siteSettings.liveSupport.activeSession && siteSettings.liveSupport.activeSession.status === 'pending') {
+            siteSettings.liveSupport.activeSession.status = 'active';
+            siteSettings.liveSupport.activeSession.staffId = staffId;
+            const staffName = siteSettings.staffSystem.users[staffId].nickname || siteSettings.staffSystem.users[staffId].name;
+            siteSettings.liveSupport.activeSession.messages.push({ sender: 'system', text: `${staffName} has joined the chat.`, timestamp: new Date().toISOString() });
+            await adminLog('💬 Chat Accepted', `**Staff:** ${staffName}\n**User:** ${siteSettings.liveSupport.activeSession.userId}`, 'info');
+            await saveDataToStorage(null);
+            renderStaffSupportContent();
+        }
+    }
+
+    // EDIT: Fixed staff chat function
+    async function staffSendSupportMessage() {
+        const input = document.getElementById('staff-support-input');
+        const messageText = input.value.trim();
+        if (!messageText || !siteSettings.liveSupport.activeSession) return;
+        
+        siteSettings.liveSupport.activeSession.messages.push({ sender: 'staff', text: messageText, timestamp: new Date().toISOString() });
+        siteSettings.liveSupport.activeSession.staffTyping = false;
+        input.value = '';
+        await saveDataToStorage(null);
+        renderStaffSupportContent(); // Re-render immediately for snappy UI
+    }
+
+    async function staffCloseSupportSession() {
+        if (confirm("Are you sure you want to finish this chat?")) {
+            const staffName = siteSettings.staffSystem.users[siteSettings.liveSupport.activeSession.staffId].name;
+            await adminLog('💬 Chat Finished', `**Staff:** ${staffName}\n**User:** ${siteSettings.liveSupport.activeSession.userId}`, 'info');
+            siteSettings.liveSupport.activeSession = null;
+            await saveDataToStorage(null);
+            renderStaffSupportContent();
+        }
+    }
+
 
     function renderTaskItem(taskId, task, staffId) {
         const userSubmissions = (task.submissions || []).filter(sub => sub.userId === staffId);
@@ -780,9 +1644,8 @@
         if (!file) return;
 
         if (file.size > MAX_UPLOAD_SIZE_MB * 1024 * 1024) {
-            alert(`File is too large. Please upload an image smaller than ${MAX_UPLOAD_SIZE_MB}MB.`);
-            fileInput.value = '';
-            return;
+            alert(`File is too large. Max size is ${MAX_UPLOAD_SIZE_MB}MB.`);
+            fileInput.value = ''; return;
         }
 
         fileInput.disabled = true;
@@ -797,15 +1660,10 @@
             const user = siteSettings.staffSystem.users[staffId];
             if (task) {
                 if (!task.submissions) task.submissions = [];
-                task.submissions.push({
-                    userId: staffId,
-                    userName: user.name,
-                    proof: base64String,
-                    timestamp: new Date().toISOString()
-                });
+                task.submissions.push({ userId: staffId, userName: user.name, proof: base64String, timestamp: new Date().toISOString() });
                 await adminLog('✅ Task Proof Submitted', `**${user.name}** submitted proof for task:\n*${task.title}*`, 'task_completion', 8311585);
                 await saveDataToStorage(null);
-                renderStaffTasksPage();
+                renderStaffTasksContent(staffId);
             }
         };
         reader.onerror = () => {
@@ -847,8 +1705,9 @@
         let html = `<h3>Users</h3>
             <div class="admin-list-item">
                 <h4>Add New User</h4>
-                <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items:flex-end;">
-                    <div><label>User Name</label><input type="text" id="new-user-name" placeholder="John Doe"></div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items:flex-end;">
+                    <div><label>Staff ID</label><input type="text" id="new-user-name" placeholder="john.doe"></div>
+                    <div><label>Initial Key</label><input type="text" id="new-user-key" placeholder="Optional"></div>
                     <div><label>Assign Role</label><select id="new-user-role">${rolesDropdown}</select></div>
                     <button class="btn btn-primary" style="width:auto;" onclick="addStaffUser()">Add User</button>
                 </div>
@@ -858,10 +1717,11 @@
             const role = roles[user.roleId];
             return `
             <div class="admin-list-item">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <h4 style="color:${role ? role.color : 'inherit'}" class="${role && role.shine ? 'shine' : ''}">${user.name}</h4>
-                        <p style="font-size:0.9em; color:var(--text-secondary);">ID: ${userId} <button class="btn-secondary" style="padding: 2px 6px; font-size: 0.8em; margin-left: 10px;" onclick="copyToClipboard('${userId}')">Copy</button></p>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap: 15px;">
+                    <img src="${user.pfpUrl || 'https://i.imgur.com/gLaLga1.png'}" style="width:40px; height:40px; border-radius:50%; object-fit: cover;" onerror="this.src='https://i.imgur.com/gLaLga1.png'">
+                    <div style="flex-grow:1;">
+                        <h4 style="color:${role ? role.color : 'inherit'}" class="${role && role.shine ? 'shine' : ''}">${user.nickname || user.name}</h4>
+                        <p style="font-size:0.9em; color:var(--text-secondary); margin:0;">ID: ${userId} | Email: ${user.email || 'Not set'}</p>
                     </div>
                     <button class="btn-danger" style="width:auto;" onclick="deleteStaffUser('${userId}')">Delete</button>
                 </div>
@@ -870,22 +1730,15 @@
         container.innerHTML = html;
     }
 
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert('Copied to clipboard!');
-        }, () => {
-            alert('Failed to copy.');
-        });
-    }
-
     async function addStaffUser() {
         const name = document.getElementById('new-user-name').value.trim();
         const roleId = document.getElementById('new-user-role').value;
-        if (!name || !roleId) { alert("Name and role are required."); return; }
+        const key = document.getElementById('new-user-key').value;
+        if (!name || !roleId) { alert("Staff ID and role are required."); return; }
         const userId = name.toLowerCase().replace(/\s+/g, '-');
-        if (siteSettings.staffSystem.users[userId]) { alert("A user with this name already exists."); return; }
+        if (siteSettings.staffSystem.users[userId]) { alert("A user with this ID already exists."); return; }
 
-        siteSettings.staffSystem.users[userId] = { name, roleId };
+        siteSettings.staffSystem.users[userId] = { name, roleId, key: key || null, email: null, nickname: null, pfpUrl: null };
         const roleName = siteSettings.staffSystem.roles[roleId].name;
         await adminLog('👤 Staff User Added', `**Name:** ${name}\n**ID:** ${userId}\n**Role:** ${roleName}`, 'user_management');
         await saveDataToStorage(null);
@@ -895,9 +1748,7 @@
     async function deleteStaffUser(userId) {
         const userName = siteSettings.staffSystem.users[userId].name;
         if (confirm(`Are you sure you want to delete user ${userName}?`)) {
-            Object.values(siteSettings.staffSystem.tasks).forEach(task => {
-                task.assignedTo = task.assignedTo.filter(id => id !== userId);
-            });
+            Object.values(siteSettings.staffSystem.tasks).forEach(task => { task.assignedTo = task.assignedTo.filter(id => id !== userId); });
             delete siteSettings.staffSystem.users[userId];
             await adminLog('🗑️ Staff User Deleted', `**Name:** ${userName}\n**ID:** ${userId}`, 'delete');
             await saveDataToStorage(null);
@@ -940,11 +1791,7 @@
         const roleId = name.toLowerCase().replace(/\s+/g, '-');
         if (siteSettings.staffSystem.roles[roleId]) { alert("A role with this name already exists."); return; }
 
-        siteSettings.staffSystem.roles[roleId] = {
-            name: name,
-            color: document.getElementById('new-role-color').value,
-            shine: document.getElementById('new-role-shine').checked
-        };
+        siteSettings.staffSystem.roles[roleId] = { name: name, color: document.getElementById('new-role-color').value, shine: document.getElementById('new-role-shine').checked };
         await adminLog('🎨 Staff Role Created', `**Name:** ${name}\n**ID:** ${roleId}`, 'user_management');
         await saveDataToStorage(null);
         renderAdminRoles();
@@ -954,9 +1801,7 @@
     async function deleteStaffRole(roleId) {
         const roleName = siteSettings.staffSystem.roles[roleId].name;
         if (confirm(`Deleting role '${roleName}' will unassign it from all users. Are you sure?`)) {
-            Object.values(siteSettings.staffSystem.users).forEach(user => {
-                if (user.roleId === roleId) user.roleId = null;
-            });
+            Object.values(siteSettings.staffSystem.users).forEach(user => { if (user.roleId === roleId) user.roleId = null; });
             delete siteSettings.staffSystem.roles[roleId];
             await adminLog('🗑️ Staff Role Deleted', `**Name:** ${roleName}\n**ID:** ${roleId}`, 'delete');
             await saveDataToStorage(null);
@@ -1040,12 +1885,8 @@
 
         if (!siteSettings.staffSystem.tasks) siteSettings.staffSystem.tasks = {};
         siteSettings.staffSystem.tasks[taskId] = {
-            title: title,
-            description: document.getElementById('new-task-desc').value.trim(),
-            goal: parseInt(document.getElementById('new-task-goal').value) || 1,
-            assignedTo: assignedTo,
-            submissions: []
-        };
+            title: title, description: document.getElementById('new-task-desc').value.trim(), goal: parseInt(document.getElementById('new-task-goal').value) || 1,
+            assignedTo: assignedTo, submissions: [] };
         const userNames = assignedTo.map(id => siteSettings.staffSystem.users[id].name).join(', ');
         await adminLog('📋 Staff Task Created', `**Title:** ${title}\n**Assigned To:** ${userNames}`, 'user_management');
         await saveDataToStorage(null);
@@ -1063,7 +1904,7 @@
     }
     
     // ===================================================================================
-    // RESTORED: APPLICATION & WEBHOOK EDITORS
+    // APPLICATION & WEBHOOK EDITORS
     // ===================================================================================
 
     function renderWebhookEditor(initialTab) {
@@ -1071,27 +1912,22 @@
         const editorContainer = document.getElementById('webhook-editor-container');
         tabsContainer.innerHTML = '';
 
-        Object.keys(siteSettings.appConfigs).forEach(key => {
-            tabsContainer.innerHTML += `<button class="webhook-tab" data-key="${key}">${siteSettings.appConfigs[key].title}</button>`;
-        });
+        Object.keys(siteSettings.appConfigs).forEach(key => { tabsContainer.innerHTML += `<button class="webhook-tab" data-key="${key}">${siteSettings.appConfigs[key].title}</button>`; });
         tabsContainer.innerHTML += `<button class="webhook-tab" data-key="logs">Admin Logs</button>`;
         
         const renderContent = (tabKey) => {
             let content = '';
             if (tabKey === 'logs') {
                 const logHooks = siteSettings.logWebhooks || { adminLogUrl: '' };
-                content = `
-                    <h3>Admin Activity Logs</h3>
-                    <p>This webhook receives logs for admin logins, submission changes, and settings updates.</p>
-                    <div><label>Admin Log Webhook URL</label><input type="text" value="${logHooks.adminLogUrl}" oninput="siteSettings.logWebhooks.adminLogUrl = this.value;"></div>`;
+                content = `<h3>Admin Activity Logs</h3><p>This webhook receives logs for admin logins, submission changes, and settings updates.</p>
+                           <div><label>Admin Log Webhook URL</label><input type="text" value="${logHooks.adminLogUrl}" oninput="siteSettings.logWebhooks.adminLogUrl = this.value;"></div>`;
             } else {
                 const config = siteSettings.appConfigs[tabKey];
-                content = `
-                    <h3>${config.title} Application Webhook</h3>
-                    <div><label>Webhook URL</label><input type="text" value="${config.webhookUrl || ''}" oninput="siteSettings.appConfigs['${tabKey}'].webhookUrl = this.value;"></div>
-                    <div><label>Bot Username</label><input type="text" value="${config.username}" oninput="siteSettings.appConfigs['${tabKey}'].username = this.value;"></div>
-                    <div><label>Bot Avatar URL</label><input type="text" value="${config.avatarUrl}" oninput="siteSettings.appConfigs['${tabKey}'].avatarUrl = this.value;"></div>
-                    <div><label>Embed Color</label><input type="color" value="${config.embedColor}" style="padding:0; height:40px; width:100%;" oninput="siteSettings.appConfigs['${tabKey}'].embedColor = this.value;"></div>`;
+                content = `<h3>${config.title} Application Webhook</h3>
+                           <div><label>Webhook URL</label><input type="text" value="${config.webhookUrl || ''}" oninput="siteSettings.appConfigs['${tabKey}'].webhookUrl = this.value;"></div>
+                           <div><label>Bot Username</label><input type="text" value="${config.username}" oninput="siteSettings.appConfigs['${tabKey}'].username = this.value;"></div>
+                           <div><label>Bot Avatar URL</label><input type="text" value="${config.avatarUrl}" oninput="siteSettings.appConfigs['${tabKey}'].avatarUrl = this.value;"></div>
+                           <div><label>Embed Color</label><input type="color" value="${config.embedColor}" style="padding:0; height:40px; width:100%;" oninput="siteSettings.appConfigs['${tabKey}'].embedColor = this.value;"></div>`;
             }
             editorContainer.innerHTML = content;
         }
@@ -1113,16 +1949,14 @@
         container.innerHTML = '';
         Object.keys(siteSettings.appConfigs).forEach(key => {
             container.innerHTML += `<div class="admin-list-item" style="display:flex; justify-content:space-between; align-items:center;">
-                <h4>${siteSettings.appConfigs[key].title}</h4>
-                <button class="btn-secondary" onclick="renderApplicationEditor('${key}')">Edit</button>
-            </div>`;
+                <h4>${siteSettings.appConfigs[key].title}</h4><button class="btn-secondary" onclick="renderApplicationEditor('${key}')">Edit</button></div>`;
         });
         container.innerHTML += `<button class="btn btn-primary" onclick="addApplicationType()">Add New Application Type</button>`;
         document.getElementById('application-editor-view').style.display = 'none';
     }
 
     function renderApplicationEditor(appKey) {
-        const config = JSON.parse(JSON.stringify(siteSettings.appConfigs[appKey])); // Deep copy
+        const config = JSON.parse(JSON.stringify(siteSettings.appConfigs[appKey]));
         const view = document.getElementById('application-editor-view');
         
         let questionsHTML = config.questions.map((q, index) => `
@@ -1130,19 +1964,15 @@
                 <div style="margin-bottom:1rem;"><label>Question Label</label><input type="text" value="${q.label}" class="q-label"></div>
                 <div><label>Question Type</label><select class="q-type"><option value="text" ${q.type === 'text' ? 'selected':''}>Text Input</option><option value="textarea" ${q.type === 'textarea' ? 'selected':''}>Text Area</option></select></div>
                 <button class="btn-danger" style="margin-top:10px; width:auto;" onclick="this.parentElement.remove()">Remove</button>
-            </div>
-        `).join('');
+            </div>`).join('');
 
-        view.innerHTML = `
-            <h3>Editing: ${config.title}</h3>
+        view.innerHTML = `<h3>Editing: ${config.title}</h3>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem;">
                 <div><label>Title</label><input type="text" id="edit-app-title" value="${config.title}"></div>
                 <div><label>Description</label><input type="text" id="edit-app-desc" value="${config.desc}"></div>
             </div>
-            <h3>Questions</h3>
-            <div id="questions-editor-container">${questionsHTML}</div>
-            <button class="btn btn-secondary" onclick="addQuestionToEditor()">Add Question</button>
-            <hr style="border-color:var(--border-color); margin: 20px 0;">
+            <h3>Questions</h3><div id="questions-editor-container">${questionsHTML}</div>
+            <button class="btn btn-secondary" onclick="addQuestionToEditor()">Add Question</button><hr style="border-color:var(--border-color); margin: 20px 0;">
             <div style="display:flex; gap:10px;">
                 <button class="btn btn-primary" onclick="saveApplicationChanges('${appKey}', this)">Save Changes</button>
                 <button class="btn-secondary" onclick="cancelEdit()">Cancel</button>
@@ -1154,9 +1984,8 @@
 
     function addQuestionToEditor() {
         const container = document.getElementById('questions-editor-container');
-        const index = container.children.length;
         container.innerHTML += `
-            <div class="admin-list-item" data-question-index="${index}">
+            <div class="admin-list-item" data-question-index="${container.children.length}">
                 <div style="margin-bottom:1rem;"><label>Question Label</label><input type="text" placeholder="Your new question" class="q-label"></div>
                 <div><label>Question Type</label><select class="q-type"><option value="text">Text Input</option><option value="textarea">Text Area</option></select></div>
                 <button class="btn-danger" style="margin-top:10px; width:auto;" onclick="this.parentElement.remove()">Remove</button>
@@ -1170,17 +1999,9 @@
 
     async function saveApplicationChanges(appKey, saveButton) {
         const view = document.getElementById('application-editor-view');
-        const newConfig = {
-            ...siteSettings.appConfigs[appKey],
-            title: view.querySelector('#edit-app-title').value,
-            desc: view.querySelector('#edit-app-desc').value,
-            questions: []
-        };
+        const newConfig = { ...siteSettings.appConfigs[appKey], title: view.querySelector('#edit-app-title').value, desc: view.querySelector('#edit-app-desc').value, questions: [] };
         view.querySelectorAll('#questions-editor-container .admin-list-item').forEach(qElem => {
-            newConfig.questions.push({
-                label: qElem.querySelector('.q-label').value,
-                type: qElem.querySelector('.q-type').value
-            });
+            newConfig.questions.push({ label: qElem.querySelector('.q-label').value, type: qElem.querySelector('.q-type').value });
         });
         siteSettings.appConfigs[appKey] = newConfig;
         await adminLog('📝 Application Edited', `**${newConfig.title}** application was updated.`, 'info');
